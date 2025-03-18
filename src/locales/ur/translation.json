@@ -1,0 +1,197 @@
+{
+  "welcomeMessage": "مائیڈ لنک میں خوش آمدید!",
+  "goToProfile": "پروفائل پر جائیں",
+  "selectLanguage": "زبان منتخب کریں",
+  "languageChangeHint": "آپ بعد میں سیٹنگز ٹیب سے زبان تبدیل کر سکتے ہیں۔",
+  "enterPhone": "اپنا فون نمبر درج کریں",
+  "sendCode": "کوڈ بھیجیں",
+  "invalidNumber": "غلط فون نمبر",
+  "otpSent": "او ٹی پی بھیجا گیا",
+  "otpMessage": "آپ کے فون نمبر پر او ٹی پی بھیج دیا گیا ہے!",
+  "otpTitle": "OTP درج کریں",
+  "otpSubtitle": "ایک 6 ہندسوں کا کوڈ آپ کے نمبر پر بھیجا گیا ہے۔ براہ کرم درست OTP درج کریں۔",
+  "errorMessage": "غلط OTP۔ دوبارہ کوشش کریں۔",
+  "didNotReceiveCode": "کوڈ موصول نہیں ہوا؟",
+  "resendButton": "دوبارہ بھیجیں",
+  "Verify": "تصدیق کریں",
+  "nextStepButton": "اگلا مرحلہ",
+  "usernamePlaceholder": "صارف کا نام",
+  "passwordPlaceholder": "پاسورڈ",
+  "loginButton": "لاگ ان کریں",
+  "forgotPassword": "پاسورڈ بھول گئے؟",
+  "dontHaveAccount": "کیا آپ کا اکاؤنٹ نہیں ہے؟",
+  "signup": "سائن اپ کریں",
+  "invalidCredentials": "غلط صارف کا نام یا پاسورڈ",
+  "ForgotPassword": "پاسورڈ بھول گئے؟",
+  "phoneNumber": "اپنا فون نمبر درج کریں",
+  "PhoneNumber": "فون نمبر",
+  "sendOtp": "OTP بھیجیں",
+  "otp": "OTP درج کریں",
+  "verifyOtp": "OTP تصدیق کریں",
+  "newPassword": "نیا پاسورڈ درج کریں",
+  "resetPassword": "پاسورڈ ری سیٹ کریں",
+  "OTPSent": "آپ کے فون پر OTP بھیج دیا گیا ہے",
+  "otpVerified": "OTP کامیابی سے تصدیق ہوگیا",
+  "passwordResetSuccess": "آپ کا پاسورڈ کامیابی سے ری سیٹ ہوگیا",
+  "invalidPhoneNumber": "براہ کرم درست فون نمبر درج کریں",
+  "incorrectOtp": "غلط OTP، براہ کرم دوبارہ کوشش کریں",
+  "passwordTooShort": "پاسورڈ کم از کم 6 حروف کا ہونا چاہیے",
+  "roleSelection": {
+    "question": "آپ کا کردار کیا ہے؟",
+    "subheading": "آگے بڑھنے کے لئے نیچے دیے گئے اختیارات میں سے ایک کا انتخاب کریں:",
+    "roles": {
+      "maid": "ملازمہ",
+      "homeOwner": "گھر کا مالک"
+    }
+  },
+  "signUpScreen": {
+    "register": "رجسٹر",
+    "subtitle": "لاگ ان کرنے کے لیے رجسٹر کریں۔",
+    "alreadyAccount": "پہلے سے ہی اکاؤنٹ ہے؟",
+    "signIn": "سائن ان کریں",
+    "placeholders": {
+      "fullName": "پورا نام",
+      "username": "صارف کا نام",
+      "email": "ای میل",
+      "phone": "فون نمبر",
+      "password": "پاس ورڈ",
+      "address": "گھر کا پتہ"
+    },
+    "terms": "میں شرائط و ضوابط سے اتفاق کرتا ہوں",
+    "submit": "جمع کرائیں",
+    "alertTerms": "براہ کرم آگے بڑھنے کے لیے شرائط و ضوابط قبول کریں۔",
+    "success": "رجسٹریشن کامیاب ہوئی!"
+  },
+  "alerts": {
+    "invalidFullName": "آپ کے نام میں صرف حروف تہجی ہونے چاہئیں",
+    "invalidUsername": "صارف نام صرف حروف، اعداد، یا انڈر سکور پر مشتمل ہونا چاہیے۔",
+    "invalidEmail": "براہ کرم ایک درست ای میل ایڈریس درج کریں۔",
+    "invalidPhone": "فون نمبر ایک درست پاکستانی نمبر ہونا چاہیے۔",
+    "invalidPassword": "پاس ورڈ کم از کم 8 حروف طویل ہونا چاہیے، جس میں ایک بڑا حرف، ایک چھوٹا حرف، ایک عدد، اور ایک خاص کردار شامل ہو۔",
+    "emptyField": "براہ کرم تمام فیلڈز کو پر کریں۔"
+},
+"maidSignUpScreen": {
+    "title": "رجسٹر کریں",
+    "placeholders": {
+      "fullName": "پورا نام درج کریں",
+      "phone": "فون نمبر درج کریں",
+      "cityOfService": "خدمت کا شہر درج کریں",
+      "password": "پاس ورڈ"
+    },
+    "next": "اگلا"
+  },
+  "workDetailsScreen": {
+    "title": "کام کی تفصیلات",
+    "subtitle": "براہ کرم اپنے کام کی تفصیلات درج کریں۔",
+    "placeholders": {
+      "yearsOfExperience": "تجربے کے سال درج کریں",
+      "ratePerHour": "فی گھنٹہ شرح درج کریں",
+      "addService": "سروس شامل کریں"
+    },
+    "addServices": "سروس شامل کریں",
+    "selectedServices": "منتخب سروسز",
+    "workAvailability": "کام کی دستیابی",
+    "workAvailabilityOptions": {
+      "fullTime": "فل ٹائم",
+      "partTime": "جز وقتی"
+    },
+    "availableDays": "دستیاب دن",
+    "availableHours": "دستیاب اوقات",
+    "next": "اگلا",
+    "save": "محفوظ کریں",
+    "alerts": {
+      "emptyField": "براہ کرم تمام فیلڈز کو پُر کریں۔",
+      "invalidYearsOfExperience": "تجربے کے سال درست عدد ہونا چاہیے۔",
+      "invalidRatePerHour": "فی گھنٹہ شرح درست عدد ہونی چاہیے۔",
+      "selectServices": "براہ کرم کم از کم ایک سروس منتخب کریں۔",
+      "selectAvailability": "براہ کرم دستیابی منتخب کریں۔",
+       "permissionDenied": "اجازت مسترد کردی گئی۔ براہ کرم کیمرہ/گیلری کی رسائی کو فعال کریں۔",
+       
+    "registrationComplete": "آپ کی رجسٹریشن مکمل ہو چکی ہے!"
+    }
+  },
+  "addServicesScreen": {
+    "title": "خدمات شامل کریں",
+    "searchPlaceholder": "خدمت تلاش کریں",
+    "saveButton": "محفوظ کریں",
+    "suggestedServices": {
+      "cleaning": "صفائی",
+      "cooking": "کھانا پکانا",
+      "childcare": "بچوں کی دیکھ بھال",
+      "elderCare": "بزرگوں کی دیکھ بھال",
+      "gardening": "باغبانی"
+    }
+  },
+  "profilePictureScreen": {
+    "title": ": اپنا پروفائل سیٹ کریں",
+    "subtitle": "اپنی پروفائل فوٹو اور بائیو شامل کریں۔",
+    "uploadImage": "اپنی پروفائل تصویر اپ لوڈ کریں",
+    "takePhoto": "تصویر لیں",
+    "selectFromGallery": "گیلری سے منتخب کریں",
+    "enterBio": "اپنا بایو درج کریں (اختیاری)",
+    "skip": " چھوڑیں",
+    "next": "اگلا"
+  },
+  "verificationScreen": {
+    "title": "تصدیق",
+    "subtitle": "آپ کی تصدیق کے لیے براہ کرم اپنا شناختی کارڈ اور کرمنل ریکارڈ سرٹیفکیٹ اپ لوڈ کریں۔",
+    "uploadCnic": "شناختی کارڈ اپ لوڈ کریں",
+    "uploadCriminalRecord": "مجرمانہ ریکارڈ سرٹیفیکیٹ اپ لوڈ کریں",
+    "uploadDocuments": "براہ کرم دونوں شناختی کارڈ اور مجرمانہ ریکارڈ سرٹیفیکیٹ اپ لوڈ کریں تاکہ آپ آگے بڑھ سکیں۔",
+    "uploaded": "اپ لوڈ کیا گیا",
+    "submit": "رجسٹریشن جمع کریں"
+  },
+  "search": {
+    "placeholder": "مائیڈز یا نوکریوں کی تلاش کریں"
+  },
+  "user": {
+    "name": "جان ڈو",
+    "city": "کراچی",
+    "services": "صفائی، کھانا پکانا",
+    "duration": "فل ٹائم"
+  },
+  "buttons": {
+    "bookOrAccept": "کتابی"
+  },
+  "Hometab":
+  {
+    "search_placeholder": "خادماؤں یا خدمات کے لیے تلاش کریں...",
+  "emergency_title": "ہنگامی الرٹ",
+  "emergency_message": "کیا آپ پولیس کو کال کرنا چاہتے ہیں؟",
+  "cancel": "منسوخ کریں",
+  "call_police": "پولیس کو کال کریں",
+  "browse": "براؤز کریں",
+  "customize": "حسب ضرورت",
+  "book": "بک کریں"
+  },
+  "CustomizeTab": {
+    "enter_location": "مقام درج کریں",
+    "enter_duration": "مدت درج کریں",
+    "enter_job_type": "کام کی قسم درج کریں",
+    "enter_charges": "چارجز درج کریں",
+    "search": "تلاش کریں",
+    "customizeOrder": "اپنے آرڈر کو حسب ضرورت بنائیں"
+  },
+  "Notification": {
+       "notifications": "نوٹیفکیشنز",
+        "noNotifications": "کوئی نوٹیفکیشن دستیاب نہیں ہے",
+        "seeDetails": "تفصیل دیکھیں",
+        "chat": "چیٹ کریں",
+         "switchRole": "کردار کو تبدیل کریں"
+  },
+  "Conversation": {
+    "title": "بات چیت"
+  },
+  "Location": {
+    "locationPermissionDenied": "مقام تک رسائی کی اجازت مسترد کر دی گئی۔",
+  "locationShared": "مقام کا اشتراک کیا گیا۔",
+  "locationSharedMessage": "آپ کے مقام کا دوسرے شخص کے ساتھ اشتراک کیا گیا ہے۔",
+  "unableToGetLocation": "موجودہ مقام حاصل کرنے سے قاصر۔",
+  "error": "خرابی",
+  "maidLocation": "نوکرانی کا مقام",
+  "homeownerLocation": "گھر کے مالک کا مقام",
+  "yourLocation": "آپ کا مقام",
+  "shareLocation": "مقام کا اشتراک کریں",
+  "startTracking": "ٹریکنگ شروع کریں",
+  "stopTracking": "ٹریکنگ بند کریں"
+}}

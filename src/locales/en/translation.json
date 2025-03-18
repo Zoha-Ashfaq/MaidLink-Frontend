@@ -1,0 +1,199 @@
+{
+  "welcomeMessage": "Welcome to MaidLink!",
+  "goToProfile": "Go to Profile",
+  "selectLanguage": "Select Your Preferred Language",
+  "languageChangeHint": "You can change language later from Settings tab",
+  "enterPhone": "Enter your phone number",
+  "sendCode": "Send Code",
+  "invalidNumber": "Invalid phone number",
+  "otpSent": "OTP Sent",
+  "otpMessage": "An OTP has been sent to your phone number!",
+  "otpTitle": "Enter OTP",
+  "otpSubtitle": "A 6-digit code has been sent to your number. Please enter valid OTP.",
+  "errorMessage": "Invalid OTP. Please try again.",
+  "didNotReceiveCode": "Didn't receive the code?",
+  "resendButton": "Resend",
+  "Verify": "Verify",
+  "nextStepButton": "Next Step",
+  "usernamePlaceholder": "Username",
+  "passwordPlaceholder": "Password",
+  "loginButton": "LOGIN",
+  "forgotPassword": "Forgot Password?",
+  "dontHaveAccount": "Don't have an account?",
+  "signup": "Sign up",
+  "invalidCredentials": "Invalid username or password",
+  "ForgotPassword": "Forgot Password",
+  "phoneNumber": "Enter your phone number",
+  "PhoneNumber": "PHONE NUMBER",
+  "sendOtp": "Send OTP",
+  "otp": "Enter OTP",
+  "verifyOtp": "Verify OTP",
+  "newPassword": "Enter new password",
+  "resetPassword": "Reset Password",
+  "OTPSent": "OTP sent to your phone",
+  "otpVerified": "OTP verified successfully",
+  "passwordResetSuccess": "Your password has been reset successfully",
+  "invalidPhoneNumber": "Please enter a valid phone number",
+  "incorrectOtp": "Incorrect OTP, please try again",
+  "passwordTooShort": "Password should be at least 6 characters long",
+  "roleSelection": {
+    "question": "What is your role?",
+    "subheading": "Choose one of the options below to proceed:",
+    "roles": {
+      "maid": "Maid",
+      "homeOwner": "Homeowner"
+    }
+  },
+  "signUpScreen": {
+    "register": "Register",
+    "subtitle": "Please register to login.",
+    "alreadyAccount": "Already have an account?",
+    "signIn": "SIGN IN",
+    "placeholders": {
+      "fullName": "Full Name",
+      "username": "Username",
+      "email": "Email",
+      "phone": "Phone No.",
+      "password": "Password",
+      "address": "Home Address"
+    },
+    "terms": "I agree to the Terms and Conditions",
+    "submit": "Submit",
+    "alertTerms": "Please accept the Terms and Conditions to proceed.",
+    "success": "Sign-up successful!"
+  },
+  "alerts": {
+    "invalidFullName": "Your name should have only alphabets",
+    "invalidUsername": "Username must only contain letters, numbers, or underscores.",
+    "invalidEmail": "Please enter a valid email address.",
+    "invalidPhone": "Phone number must be a valid Pakistani number.",
+    "invalidPassword": "Password must be at least 8 characters long, including an uppercase letter, a lowercase letter, a number, and a special character.",
+    "emptyField": "Please fill all the fields"
+  },
+  "maidSignUpScreen": {
+    "title": "SIGN UP",
+    "placeholders": {
+      "fullName": "Enter Full Name",
+      "phone": "Enter Phone Number",
+      "cityOfService": "Enter City of Service",
+      "password": "Enter Password"
+    },
+    "next": "NEXT"
+  },
+  "workDetailsScreen": {
+    "title": "Work Details",
+    "subtitle": "Please enter your work details.",
+    "placeholders": {
+      "yearsOfExperience": "Enter Years of Experience",
+      "ratePerHour": "Enter Rate per Hour",
+      "addService": "Add Service"
+    },
+    "addServices": "Add Services",
+    "selectedServices": "Selected Services",
+    "workAvailability": "Work Availability",
+    "workAvailabilityOptions": {
+      "fullTime": "Full Time",
+      "partTime": "Part Time"
+    },
+    "availableDays": "Available Days",
+    "availableHours": "Available Hours",
+    "next": "Next",
+    "save": "Save",
+    "alerts": {
+      "emptyField": "Please fill all fields.",
+      "invalidYearsOfExperience": "Years of Experience should be a valid number.",
+      "invalidRatePerHour": "Rate per hour should be a valid number.",
+      "selectServices": "Please select at least one service.",
+      "selectAvailability": "Please select availability",
+      "permissionDenied": "Permission denied. Please enable camera/gallery access.",
+      
+    "registrationComplete": "Your registration is complete!"
+
+    }
+  },
+  "addServicesScreen": {
+    "title": "Add Services",
+    "searchPlaceholder": "Search for a service",
+    "saveButton": "Save",
+    "suggestedServices": {
+      "cleaning": "Cleaning",
+      "cooking": "Cooking",
+      "childcare": "Childcare",
+      "elderCare": "Elder Care",
+      "gardening": "Gardening"
+    }
+  },
+  "profilePictureScreen": {
+    "title": "SET YOUR PROFILE",
+    "subtitle": "Add your  profile photo and bio",
+    "uploadImage": "Upload your profile picture",
+    "takePhoto": "Take a photo",
+    "selectFromGallery": "Select from gallery",
+    "enterBio": "Enter your bio (optional)",
+    "skip": "Skip",
+    "next": "Next"
+  },
+  "verificationScreen": {
+    "title": "Verification",
+    "subtitle": "Please upload your CNIC and Criminal Record Certificate to Verify you.",
+    "uploadCnic": "Upload CNIC",
+    "uploadCriminalRecord": "Upload Criminal Record Certificate",
+    "uploadDocuments": "Please upload both CNIC and Criminal Record Certificate to proceed.",
+    "uploaded": "Uploaded",
+    "submit": "Submit Registration"
+  },
+  "search": {
+    "placeholder": "Search for maids or jobs"
+  },
+  "user": {
+    "name": "John Doe",
+    "city": "Karachi",
+    "services": "Cleaning, Cooking",
+    "duration": "Full-time"
+  },
+  "buttons": {
+    "bookOrAccept": "Book"
+  },
+  "Hometab":
+  {
+    "search_placeholder": "Search for maids or services...",
+    "emergency_title": "Emergency Alert",
+    "emergency_message": "Do you want to call the police?",
+    "cancel": "Cancel",
+    "call_police": "Call Police",
+    "browse": "Browse",
+    "customize": "Customize",
+    "book": "Book"
+  },
+  "CustomizeTab": {
+    "enter_location": "Enter Location",
+    "enter_duration": "Enter Duration",
+    "enter_job_type": "Enter Job Type",
+    "enter_charges": "Enter Charges",
+    "search": "Search",
+    "customizeOrder": "Customize your order"
+  },
+  "Notification": {
+      "notifications": "Notifications",
+        "noNotifications": "No notifications available.",
+        "seeDetails": "See Details",
+        "chat": "Chat",
+        "switchRole": "Switch Role"
+  },
+  "Conversation": {
+    "title": "Conversations"
+  },
+  "Location": {
+    "locationPermissionDenied": "Permission to access location was denied",
+  "locationShared": "Location Shared",
+  "locationSharedMessage": "Your location has been shared with the other person.",
+  "unableToGetLocation": "Unable to get current location.",
+  "error": "Error",
+  "maidLocation": "Maid Location",
+  "homeownerLocation": "Homeowner Location",
+  "yourLocation": "Your Location",
+  "shareLocation": "Share Location",
+  "startTracking": "Start Tracking",
+  "stopTracking": "Stop Tracking"
+  }
+}
