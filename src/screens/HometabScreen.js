@@ -131,7 +131,7 @@ const HomeScreen = () => {
         <TouchableOpacity onPress={() => navigation.navigate('Video')}>
           <Ionicons name="videocam" size={34} color="white" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+        <TouchableOpacity onPress={() => navigation.navigate('ProfileManagement')}>
           <Ionicons name="person" size={34} color="white" />
         </TouchableOpacity>
       </View>

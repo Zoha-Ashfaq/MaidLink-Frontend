@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
-
+import { Ionicons } from '@expo/vector-icons';
 const chats = [
   { id: '1', name: 'Ayesha', lastMessage: 'Hello!', profilePic: 'https://www.perfocal.com/blog/content/images/size/w960/2021/01/Perfocal_17-11-2019_TYWFAQ_100_standard-3.jpg' },
   { id: '2', name: 'Ali', lastMessage: 'See you soon!', profilePic: 'https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D' },
@@ -30,6 +30,25 @@ const ChatListScreen = ({ navigation }) => {
           </TouchableOpacity>
         )}
       />
+
+      {/* Bottom Navigation */}
+      <View style={styles.bottomNav}>
+        <TouchableOpacity onPress={() => navigation.navigate('HometabScreen')}>
+          <Ionicons name="home" size={34} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('ChatListScreen')}>
+          <Ionicons name="chatbubbles" size={34} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('LocationScreen')}>
+          <Ionicons name="location" size={34} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('VideoTutorial')}>
+          <Ionicons name="videocam" size={34} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('ProfileManagement')}>
+          <Ionicons name="person" size={34} color="white" />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -51,6 +70,17 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 1, // Keeps it above other elements
+  },
+  bottomNav: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    backgroundColor: '#66785F',
+    paddingVertical: 10,
+    position: 'absolute',
+    height: 75,
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
   container: {
     flex: 1,

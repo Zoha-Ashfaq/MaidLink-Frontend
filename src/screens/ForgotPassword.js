@@ -72,7 +72,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
 
       {/* Illustration */}
       <Image
-        source={require('../../assets/pictures/forgot password.svg')} // Replace with your image path
+        source={require('../../assets/pictures/forgot password.png')} // Replace with your image path
         style={styles.illustration}
       />
 

@@ -22,7 +22,7 @@ const RoleSelectionScreen = ({ navigation }) => {
 
       <Text style={styles.question}>{i18n.t('roleSelection.question')}</Text>
       <Text style={styles.subheading}>{i18n.t('roleSelection.subheading')}</Text>
-      <Image source={require('../../assets/pictures/interior design.svg')} style={styles.image} />
+      <Image source={require('../../assets/pictures/interior design.png')} style={styles.image} />
 
       {/* Maid Role Button */}
       <TouchableOpacity

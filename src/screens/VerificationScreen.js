@@ -103,7 +103,7 @@ const VerificationScreen = () => {
 
       {/* Illustration */}
       <Image
-        source={require('../../assets/pictures/certification.svg')} // Replace with correct path
+        source={require('../../assets/pictures/certification.png')} // Replace with correct path
         style={styles.illustration}
       />
 

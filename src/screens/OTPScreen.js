@@ -58,7 +58,7 @@ const OTPScreen = ({ navigation }) => {
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backIconContainer}>
         <Ionicons name="arrow-back" size={30} color="#66785F" />
       </TouchableOpacity>
-      <Image source={require('../../assets/pictures/authentication.svg')} style={styles.image} />
+      <Image source={require('../../assets/pictures/authentication.png')} style={styles.image} />
       <Text style={styles.title}>{t('otpTitle')}</Text> {/* Translate title */}
       <Text style={styles.subtitle}>{t('otpSubtitle')}</Text> {/* Translate subtitle */}
       

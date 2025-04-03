@@ -28,7 +28,8 @@ import { UserProvider } from './src/screens/UserContext'; // Import UserContext
 import RoleSwitchScreen from './src/screens/RoleSwitchScreen';
 import ChatListScreen from './src/screens/ChatListScreen';
 import ChatScreen from './src/screens/ChatScreen';
-
+import ProfileManagement from './src/screens/ProfileManagement';
+import Video from './src/screens/Video';
 
 const Stack = createStackNavigator(); // Initialize stack navigator
 
@@ -37,13 +38,16 @@ const App = () => {
     <UserProvider> {/* Wrap the entire app with UserProvider */}
       <NavigationContainer>
         <SafeAreaView style={{ flex: 1 }}>
-          <Stack.Navigator initialRouteName="Splash">
+          <Stack.Navigator
+            initialRouteName="Splash"
+            screenOptions={{ headerShown: false }} // Remove header from all screens globally
+          >
             <Stack.Screen name="Splash" component={SplashScreen} />
             <Stack.Screen name="LanguageSelectionScreen" component={LanguageSelectionScreen} />
             <Stack.Screen name="PhoneNumberScreen" component={PhoneNumberScreen} /> 
             <Stack.Screen name="OTP" component={OTPScreen} options={{ title: 'OTP Verification' }} />
-            <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Login' }} />
-            <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ title: 'ForgotPassword' }} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
             <Stack.Screen name="RoleSelectionScreen" component={RoleSelectionScreen} />
             <Stack.Screen name="HomeOwnerSignUp" component={HomeOwnerSignUp} />
             <Stack.Screen name="MaidSignUp" component={MaidSignUp} />
@@ -60,6 +64,8 @@ const App = () => {
             <Stack.Screen name="ProfilesScreen" component={ProfilesScreen} />
             <Stack.Screen name="ChatListScreen" component={ChatListScreen} />
             <Stack.Screen name="ChatScreen" component={ChatScreen} />
+            <Stack.Screen name="ProfileManagement" component={ProfileManagement} />
+            <Stack.Screen name="Video" component={Video} />
           </Stack.Navigator>
         </SafeAreaView>
       </NavigationContainer>

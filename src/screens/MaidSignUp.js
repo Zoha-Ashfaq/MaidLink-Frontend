@@ -73,7 +73,7 @@ const MaidSignUp = () => {
       </TouchableOpacity>
 
       {/* Illustration */}
-      <Image source={require('../../assets/pictures/personal info.svg')} style={styles.illustration} />
+      <Image source={require('../../assets/pictures/personal info.png')} style={styles.illustration} />
 
       {/* Title and Subtitle */}
       <Text style={styles.title}>{t('signUpScreen.register')}</Text>

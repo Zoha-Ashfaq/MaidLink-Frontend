@@ -76,7 +76,7 @@ const WorkDetailsScreen = () => {
 
       {/* Illustration */}
       <Image
-        source={require('../../assets/pictures/profile details.svg')} // Update with the correct illustration path
+        source={require('../../assets/pictures/profile details.png')} // Update with the correct illustration path
         style={styles.illustration}
       />
 

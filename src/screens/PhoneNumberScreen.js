@@ -31,7 +31,7 @@ export default function PhoneNumberScreen({ navigation }) {
       </TouchableOpacity>
 
       {/* Illustration */}
-      <Image source={require('../../assets/pictures/sign up.svg')} style={styles.illustration} />
+      <Image source={require('../../assets/pictures/sign up.png')} style={styles.illustration} />
 
       {/* Title */}
       <Text style={styles.title}>{i18n.t('enterPhone')}</Text>

@@ -88,7 +88,7 @@ const HomeOwnerSignUp = ({ navigation }) => {
 
       {/* Illustration */}
       <Image
-        source={require('../../assets/pictures/personal info.svg')}
+        source={require('../../assets/pictures/personal info.png')}
         style={styles.illustration}
         resizeMode="contain"
       />

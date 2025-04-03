@@ -70,7 +70,7 @@ const ProfilePictureScreen = () => {
       {/* Illustration and Title */}
       <View style={styles.header}>
         <Image
-          source={require('../../assets/pictures/camera.svg')} // Replace with your illustration
+          source={require('../../assets/pictures/camera.png')} // Replace with your illustration
           style={styles.illustration}
         />
         <Text style={styles.title}>{t('profilePictureScreen.title')}</Text>

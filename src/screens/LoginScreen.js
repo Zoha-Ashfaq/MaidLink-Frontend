@@ -26,7 +26,7 @@ const LoginScreen = ({ navigation }) => {
       </TouchableOpacity>
 
       {/* Logo */}
-      <Image source={require('../../assets/pictures/sign in.svg')} style={styles.logo} />
+      <Image source={require('../../assets/pictures/sign in.png')} style={styles.logo} />
 
       {/* Username Input */}
       <TextInput

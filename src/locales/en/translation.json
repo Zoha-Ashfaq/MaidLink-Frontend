@@ -195,5 +195,20 @@
   "shareLocation": "Share Location",
   "startTracking": "Start Tracking",
   "stopTracking": "Stop Tracking"
+  },
+  "Video": {
+    "videoTutorials": "Video Tutorials",
+    "howToCreateAccount": "How to Create an Account",
+    "howToBrowseServices": "How to Browse Services",
+    "howToBookMaid": "How to Book a Maid",
+    "howToManageProfile": "How to Manage Your Profile",
+    "openVideoError": "Failed to open video"
+  },
+  "ProfileManagement": {
+    "profileManagement": "Profile Management",
+    "editProfile": "Edit Profile",
+    "languageLabel": "Language",
+    "myBookings": "My Bookings",
+    "logOut": "Log Out"
   }
 }

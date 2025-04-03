@@ -194,4 +194,20 @@
   "shareLocation": "مقام کا اشتراک کریں",
   "startTracking": "ٹریکنگ شروع کریں",
   "stopTracking": "ٹریکنگ بند کریں"
-}}
+},
+"Video": {
+    "videoTutorials": "ویڈیو ٹیوٹوریلز",
+    "howToCreateAccount": "اکاؤنٹ کیسے بنائیں",
+    "howToBrowseServices": "سروسز کو کیسے براؤز کریں",
+    "howToBookMaid": "مید کیسے بک کریں",
+    "howToManageProfile": "پروفائل کو کیسے منظم کریں",
+    "openVideoError": "ویڈیو کھولنے میں ناکامی",
+  },
+  "ProfileManagement": {
+    "profileManagement": "پروفائل کا انتظام",
+    "editProfile": "پروفائل میں ترمیم کریں",
+    "languageLabel": "زبان",
+    "myBookings": "میری بکنگ",
+    "logOut": "لاگ آؤٹ"
+  }
+}
