@@ -30,6 +30,10 @@ import ChatListScreen from './src/screens/ChatListScreen';
 import ChatScreen from './src/screens/ChatScreen';
 import ProfileManagement from './src/screens/ProfileManagement';
 import Video from './src/screens/Video';
+import MaidHomeScreen from './src/screens/MaidHomeScreen';
+import HomeownerNotification from './src/screens/HomeownerNotification';
+import MaidNotification from './src/screens/MaidNotification';
+import DetailsScreen from './src/screens/DetailsScreen';
 
 const Stack = createStackNavigator(); // Initialize stack navigator
 
@@ -66,6 +70,10 @@ const App = () => {
             <Stack.Screen name="ChatScreen" component={ChatScreen} />
             <Stack.Screen name="ProfileManagement" component={ProfileManagement} />
             <Stack.Screen name="Video" component={Video} />
+            <Stack.Screen name="MaidHomeScreen" component={MaidHomeScreen} />
+            <Stack.Screen name="HomeownerNotification" component={HomeownerNotification} />
+            <Stack.Screen name="MaidNotification" component={MaidNotification} />
+            <Stack.Screen name="DetailsScreen" component={DetailsScreen} />
           </Stack.Navigator>
         </SafeAreaView>
       </NavigationContainer>

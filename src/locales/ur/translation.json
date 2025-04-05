@@ -164,6 +164,15 @@
   "customize": "حسب ضرورت",
   "book": "بک کریں"
   },
+  "MaidHometab":
+  {
+    "search_placeholder": "نوکری کی درخواستیں تلاش کریں...",
+  "emergency_title": "ہنگامی الرٹ",
+  "emergency_message": "کیا آپ پولیس کو کال کرنا چاہتے ہیں؟",
+  "cancel": "منسوخ کریں",
+  "call_police": "پولیس کو کال کریں",
+  "request": "درخواست دیں"
+  },
   "CustomizeTab": {
     "enter_location": "مقام درج کریں",
     "enter_duration": "مدت درج کریں",
@@ -172,29 +181,56 @@
     "search": "تلاش کریں",
     "customizeOrder": "اپنے آرڈر کو حسب ضرورت بنائیں"
   },
-  "Notification": {
-       "notifications": "نوٹیفکیشنز",
-        "noNotifications": "کوئی نوٹیفکیشن دستیاب نہیں ہے",
-        "seeDetails": "تفصیل دیکھیں",
-        "chat": "چیٹ کریں",
-         "switchRole": "کردار کو تبدیل کریں"
-  },
+ "Notification": {
+  "notifications": "اطلاعات",
+  "noNotifications": "آپ کے پاس کوئی اطلاع نہیں ہے۔",
+  "bookingConfirmed": "آپ کی بکنگ کی تصدیق ہو گئی ہے۔",
+  "bookingDeclined": "آپ کی بکنگ مسترد کر دی گئی ہے۔",
+  "newServiceRequest": "آپ کو ایک نئی سروس کی درخواست موصول ہوئی ہے۔",
+  "locationShared": "ایک ملازمہ نے آپ کے ساتھ اپنی لوکیشن شیئر کی ہے۔",
+  "unknown": "آپ کے پاس ایک نئی اطلاع ہے۔",
+  "requestAccepted": "آپ کی درخواست قبول کر لی گئی ہے۔",
+  "requestDeclined": "آپ کی درخواست مسترد کر دی گئی ہے۔",
+  "newBooking": "آپ کو ایک نئی بکنگ موصول ہوئی ہے۔",
+  "locationSharedByOwner": "گھر کے مالک نے آپ کے ساتھ اپنی لوکیشن شیئر کی ہے۔",
+  "notificationDetails": "نوٹیفیکیشن کی تفصیلات",
+  "bookingDetails": "بکنگ کی تفصیلات",
+  "requestStatus": "درخواست کی حیثیت",
+  "ownerName": "مالک کا نام",
+  "name": "نام",
+  "time": "وقت",
+  "bookingTime": "بکنگ کا وقت",
+  "bookingLocation": "بکنگ کا مقام",
+  "location": "مقام",
+  "accept": "قبول کریں",
+  "decline": "رد کریں",
+  "chatWithUser": "صارف سے چیٹ کریں",
+  "viewLocation": "مقام دیکھیں",
+  "back": "واپس",
+  "notificationNotFound": "نوٹیفیکیشن نہیں ملی"
+},
+"DetailsScreen": {
+  "bookingDetails": "بکنگ کی تفصیلات",
+  "locationDetails": "لوکیشن کی تفصیلات",
+  "goToLocation": "لوکیشن پر جائیں",
+  "location": "لوکیشن",
+  "errorFetchingDetails": "تفصیلات حاصل کرنے میں خرابی۔ براہ کرم دوبارہ کوشش کریں۔"
+},
   "Conversation": {
     "title": "بات چیت"
   },
-  "Location": {
-    "locationPermissionDenied": "مقام تک رسائی کی اجازت مسترد کر دی گئی۔",
-  "locationShared": "مقام کا اشتراک کیا گیا۔",
-  "locationSharedMessage": "آپ کے مقام کا دوسرے شخص کے ساتھ اشتراک کیا گیا ہے۔",
-  "unableToGetLocation": "موجودہ مقام حاصل کرنے سے قاصر۔",
-  "error": "خرابی",
-  "maidLocation": "نوکرانی کا مقام",
-  "homeownerLocation": "گھر کے مالک کا مقام",
-  "yourLocation": "آپ کا مقام",
-  "shareLocation": "مقام کا اشتراک کریں",
-  "startTracking": "ٹریکنگ شروع کریں",
-  "stopTracking": "ٹریکنگ بند کریں"
-},
+ "Location": {
+    "locationPermissionDenied": "مقام کی اجازت مسترد کر دی گئی ہے۔ جاری رکھنے کے لیے براہ کرم اسے فعال کریں۔",
+    "locationShared": "مقام شیئر کر دیا گیا",
+    "locationSharedMessage": "آپ کا مقام ساتھ شیئر کیا گیا ہے",
+    "unableToGetLocation": "مقام حاصل کرنے میں ناکامی۔ براہ کرم دوبارہ کوشش کریں۔",
+    "shareLocation": "مقام شیئر کریں",
+    "searchUser": "صارف کو تلاش کریں",
+    "maidLocation": "ملازمہ کا مقام",
+    "homeownerLocation": "مالک کا مقام",
+    "yourLocation": "آپ کا مقام",
+    "Error" : "خرابی"
+  },
 "Video": {
     "videoTutorials": "ویڈیو ٹیوٹوریلز",
     "howToCreateAccount": "اکاؤنٹ کیسے بنائیں",

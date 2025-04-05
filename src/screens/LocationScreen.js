@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, TextInput, FlatList } from 'react-native';
 import * as Location from 'expo-location';
 import MapView, { Marker } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,14 +7,16 @@ import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 
 const LocationScreen = ({ route }) => {
-  const { t } = useTranslation(); // Translation hook
-  const navigation = useNavigation(); // To access navigation
+  const { t } = useTranslation();
+  const navigation = useNavigation();
   const { userType = 'homeowner' } = route.params || {}; // Get userType from route params
 
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
-  const [isTracking, setIsTracking] = useState(false);
   const [sharedLocation, setSharedLocation] = useState(null);
+  const [showUserList, setShowUserList] = useState(false); // Controls visibility of the user list
+  const [searchText, setSearchText] = useState('');
+  const [users, setUsers] = useState([]); // List of recent users (mock data)
 
   // Request location permission and fetch current location
   useEffect(() => {
@@ -30,32 +32,31 @@ const LocationScreen = ({ route }) => {
     };
 
     getLocation();
+
+    // Mock users for sharing location (this would usually come from your backend or context)
+    setUsers([
+      { id: 1, name: 'Hina', latitude: 37.789, longitude: -122.432 },
+      { id: 2, name: 'Ali', latitude: 37.790, longitude: -122.433 },
+      { id: 3, name: 'Maid A', latitude: 37.791, longitude: -122.434 },
+      { id: 4, name: 'Homeowner B', latitude: 37.792, longitude: -122.435 },
+    ]);
   }, []);
 
-  const startTracking = async () => {
-    setIsTracking(true);
-    // Track the current location in real-time
-    Location.watchPositionAsync(
-      { accuracy: Location.Accuracy.High, timeInterval: 5000, distanceInterval: 1 },
-      (newLocation) => {
-        setLocation(newLocation.coords);
-      }
-    );
-  };
-
-  const stopTracking = () => {
-    setIsTracking(false);
-    setLocation(null);
-  };
-
-  const shareLocation = () => {
+  const shareLocation = (user) => {
     if (location) {
       setSharedLocation(location);
-      Alert.alert(t('Location.locationShared'), t('Location.locationSharedMessage'));
+      Alert.alert(t('Location.locationShared'), `${t('Location.locationSharedMessage')} ${user.name}`);
+      setShowUserList(false); // Hide the user list after sharing
     } else {
       Alert.alert(t('Location.error'), t('Location.unableToGetLocation'));
     }
   };
+
+  const handleSearchChange = (text) => {
+    setSearchText(text);
+  };
+
+  const filteredUsers = users.filter(user => user.name.toLowerCase().includes(searchText.toLowerCase()));
 
   return (
     <View style={styles.container}>
@@ -65,7 +66,7 @@ const LocationScreen = ({ route }) => {
       <MapView
         style={styles.map}
         initialRegion={{
-          latitude: location ? location.latitude : 37.78825, // Default to a general location
+          latitude: location ? location.latitude : 37.78825,
           longitude: location ? location.longitude : -122.4324,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
@@ -86,27 +87,45 @@ const LocationScreen = ({ route }) => {
             pinColor="blue"
           />
         )}
+
+        {/* Markers for recent users */}
+        {users.map(user => (
+          <Marker
+            key={user.id}
+            coordinate={{ latitude: user.latitude, longitude: user.longitude }}
+            title={user.name}
+            pinColor="#FF6347" // Consistent color for users
+            onPress={() => shareLocation(user)} // Allow sharing location with this user
+          />
+        ))}
       </MapView>
 
-      {/* Buttons */}
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={styles.button} onPress={shareLocation}>
-          <Ionicons name="location-sharp" size={24} color="white" />
-          <Text style={styles.buttonText}>{t('Location.shareLocation')}</Text>
-        </TouchableOpacity>
+      {/* Share Location Button */}
+      <TouchableOpacity style={styles.button} onPress={() => setShowUserList(true)}>
+        <Ionicons name="location-sharp" size={24} color="white" />
+        <Text style={styles.buttonText}>{t('Location.shareLocation')}</Text>
+      </TouchableOpacity>
 
-        {isTracking ? (
-          <TouchableOpacity style={styles.button} onPress={stopTracking}>
-            <Ionicons name="stop-circle" size={24} color="white" />
-            <Text style={styles.buttonText}>{t('Location.stopTracking')}</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity style={styles.button} onPress={startTracking}>
-            <Ionicons name="play-circle" size={24} color="white" />
-            <Text style={styles.buttonText}>{t('Location.startTracking')}</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+      {/* Search & User List */}
+      {showUserList && (
+        <View style={styles.userListContainer}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder={t('Location.searchUser')}
+            value={searchText}
+            onChangeText={handleSearchChange}
+          />
+          <FlatList
+            data={filteredUsers}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity style={styles.userItem} onPress={() => shareLocation(item)}>
+                <Text style={styles.userName}>{item.name}</Text>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+      )}
 
       {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
@@ -144,13 +163,8 @@ const styles = StyleSheet.create({
   },
   map: {
     width: '100%',
-    height: '70%',
+    height: '60%',
     borderRadius: 10,
-  },
-  buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 20,
   },
   button: {
     flexDirection: 'row',
@@ -159,11 +173,42 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
     borderRadius: 50,
+    marginTop: 10,
+    alignSelf: 'center', // Center-align the button
   },
   buttonText: {
     color: 'white',
     marginLeft: 10,
     fontSize: 16,
+  },
+  userListContainer: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    right: 10,
+    backgroundColor: '#FFFFFF',
+    padding: 10,
+    borderRadius: 10,
+    maxHeight: 200, // To keep the list from overflowing
+    zIndex: 1, // Make sure the list stays on top of the map
+    backgroundColor: '#E8F5E9', // Greenish background for consistency
+  },
+  searchInput: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+    fontSize: 16,
+  },
+  userItem: {
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  userName: {
+    fontSize: 18,
+    color: '#333',
   },
   bottomNav: {
     flexDirection: 'row',

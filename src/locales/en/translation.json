@@ -173,28 +173,64 @@
     "search": "Search",
     "customizeOrder": "Customize your order"
   },
+  "MaidHometab":
+  {
+    "search_placeholder": "Search job requests...",
+    "emergency_title": "Emergency Alert",
+    "emergency_message": "Do you want to call the police?",
+    "cancel": "Cancel",
+    "call_police": "Call Police",
+    "request": "Request"
+  },
   "Notification": {
-      "notifications": "Notifications",
-        "noNotifications": "No notifications available.",
-        "seeDetails": "See Details",
-        "chat": "Chat",
-        "switchRole": "Switch Role"
+  "notifications": "Notifications",
+  "noNotifications": "You have no notifications.",
+  "bookingConfirmed": "Your booking has been confirmed.",
+  "bookingDeclined": "Your booking has been declined.",
+  "newServiceRequest": "You have a new service request.",
+  "locationShared": "A maid has shared their location with you.",
+  "unknown": "You have a new notification.",
+  "requestAccepted": "Your request has been accepted.",
+  "requestDeclined": "Your request has been declined.",
+  "newBooking": "You have a new booking.",
+  "locationSharedByOwner": "Homeowner shared their location with you.",
+  "notificationDetails": "Notification Details",
+    "bookingDetails": "Booking Details",
+    "requestStatus": "Request Status",
+    "ownerName": "Owner's Name",
+    "name": "Name",
+    "time": "Time",
+    "bookingTime": "Booking Time",
+    "bookingLocation": "Booking Location",
+    "location": "Location",
+    "accept": "Accept",
+    "decline": "Decline",
+    "chatWithUser": "Chat with User",
+    "viewLocation": "View Location",
+    "back": "Back",
+    "notificationNotFound": "Notification not found"
+},
+"DetailsScreen": {
+    "bookingDetails": "Booking Details",
+    "locationDetails": "Location Details",
+    "goToLocation": "Go to Location",
+    "location": "Location",
+    "errorFetchingDetails": "Error fetching details. Please try again later."
   },
   "Conversation": {
     "title": "Conversations"
   },
   "Location": {
-    "locationPermissionDenied": "Permission to access location was denied",
-  "locationShared": "Location Shared",
-  "locationSharedMessage": "Your location has been shared with the other person.",
-  "unableToGetLocation": "Unable to get current location.",
-  "error": "Error",
-  "maidLocation": "Maid Location",
-  "homeownerLocation": "Homeowner Location",
-  "yourLocation": "Your Location",
-  "shareLocation": "Share Location",
-  "startTracking": "Start Tracking",
-  "stopTracking": "Stop Tracking"
+    "locationPermissionDenied": "Location permission denied. Please enable it to continue.",
+    "locationShared": "Location Shared",
+    "locationSharedMessage": "Your location has been shared with",
+    "unableToGetLocation": "Unable to get location. Please try again.",
+    "shareLocation": "Share Location",
+    "searchUser": "Search for a user",
+    "maidLocation": "Maid's Location",
+    "homeownerLocation": "Homeowner's Location",
+    "yourLocation": "Your Location",
+    "Error" : "Error"
   },
   "Video": {
     "videoTutorials": "Video Tutorials",

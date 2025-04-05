@@ -12,7 +12,10 @@ const LoginScreen = ({ navigation }) => {
   const handleLogin = () => {
     if (username === 'Zoha' && password === '12345') {
       setErrorMessage('');
-      navigation.navigate('HometabScreen'); // Navigate to SuccessScreen on successful login
+      navigation.navigate('HometabScreen'); // Homeowner screen
+    } else if (username === 'Maid1' && password === '54321') {
+      setErrorMessage('');
+      navigation.navigate('MaidHomeScreen'); // Maid screen
     } else {
       setErrorMessage(i18n.t('invalidCredentials'));
     }

@@ -67,6 +67,7 @@ const HomeOwnerSignUp = ({ navigation }) => {
   const handleSubmit = () => {
     if (validateInputs()) {
       alert(i18n.t('signUpScreen.success'));
+      navigation.navigate('Login'); // 👈 navigate to Login screen
     }
   };
 

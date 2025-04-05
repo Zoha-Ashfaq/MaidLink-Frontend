@@ -35,7 +35,7 @@ const HomeScreen = () => {
         <TouchableOpacity onPress={handleEmergencyPress} style={styles.iconButton}>
           <Ionicons name="alert-circle" size={28} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Notifications')} style={styles.iconButton}>
+        <TouchableOpacity onPress={() => navigation.navigate('HomeownerNotification')} style={styles.iconButton}>
           <Feather name="heart" size={28} color="black" />
         </TouchableOpacity>
       </View>

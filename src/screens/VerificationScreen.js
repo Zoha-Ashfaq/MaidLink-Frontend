@@ -144,7 +144,7 @@ const VerificationScreen = () => {
       {/* Skip Button */}
       <TouchableOpacity
         style={styles.skipButton}
-        onPress={() => navigation.navigate('VerificationScreen')}
+        onPress={() => navigation.navigate('Login')}
       >
         <Text style={styles.skipText}>{t('profilePictureScreen.skip')}</Text>
       </TouchableOpacity>
