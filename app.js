@@ -6,8 +6,6 @@ import './i18n'; // Ensure i18n.js is properly imported
 import SplashScreen from './src/screens/SplashScreen'; // Import SplashScreen
 import LanguageSelectionScreen from './src/screens/LanguageSelectionScreen'; // Import LanguageSelectionScreen
 import ForgotPassword from './src/screens/ForgotPassword';
-import HomeScreen from './src/screens/HomeScreen'; // Import HomeScreen
-import ProfileScreen from './src/screens/ProfileScreen'; // Import ProfileScreen
 import PhoneNumberScreen from './src/screens/PhoneNumberScreen';
 import OTPScreen from './src/screens/OTPScreen';
 import LoginScreen from './src/screens/LoginScreen';
@@ -19,11 +17,9 @@ import AddServicesScreen from './src/screens/AddServicesScreen';
 import ProfilePictureScreen from './src/screens/ProfilePictureScreen';
 import VerificationScreen from './src/screens/VerificationScreen';
 import HometabScreen from './src/screens/HometabScreen';
-import MessageScreen from './src/screens/MessageScreen';
 import Notifications from './src/screens/Notifications';
 import EmergencyHelp from './src/screens/EmergencyHelp';
 import LocationScreen from './src/screens/LocationScreen';
-import ProfilesScreen from './src/screens/ProfilesScreen';
 import { UserProvider } from './src/screens/UserContext'; // Import UserContext
 import RoleSwitchScreen from './src/screens/RoleSwitchScreen';
 import ChatListScreen from './src/screens/ChatListScreen';
@@ -34,6 +30,7 @@ import MaidHomeScreen from './src/screens/MaidHomeScreen';
 import HomeownerNotification from './src/screens/HomeownerNotification';
 import MaidNotification from './src/screens/MaidNotification';
 import DetailsScreen from './src/screens/DetailsScreen';
+import MyBookings from './src/screens/MyBookings';
 
 const Stack = createStackNavigator(); // Initialize stack navigator
 
@@ -60,12 +57,10 @@ const App = () => {
             <Stack.Screen name="ProfilePictureScreen" component={ProfilePictureScreen} />
             <Stack.Screen name="VerificationScreen" component={VerificationScreen} />
             <Stack.Screen name="HometabScreen" component={HometabScreen} />
-            <Stack.Screen name="MessageScreen" component={MessageScreen} />
             <Stack.Screen name="EmergencyHelp" component={EmergencyHelp} />
             <Stack.Screen name="RoleSwitch" component={RoleSwitchScreen} />
             <Stack.Screen name="Notifications" component={Notifications} />
             <Stack.Screen name="LocationScreen" component={LocationScreen} />
-            <Stack.Screen name="ProfilesScreen" component={ProfilesScreen} />
             <Stack.Screen name="ChatListScreen" component={ChatListScreen} />
             <Stack.Screen name="ChatScreen" component={ChatScreen} />
             <Stack.Screen name="ProfileManagement" component={ProfileManagement} />
@@ -74,6 +69,7 @@ const App = () => {
             <Stack.Screen name="HomeownerNotification" component={HomeownerNotification} />
             <Stack.Screen name="MaidNotification" component={MaidNotification} />
             <Stack.Screen name="DetailsScreen" component={DetailsScreen} />
+            <Stack.Screen name="MyBookings" component={MyBookings} />
           </Stack.Navigator>
         </SafeAreaView>
       </NavigationContainer>

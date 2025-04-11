@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Button } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { Card } from 'react-native-paper';
 import { useUserContext } from './UserContext';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +7,13 @@ import { useTranslation } from 'react-i18next';
 const MaidNotificationScreen = ({ navigation }) => {
   const { notifications } = useUserContext();
   const { t } = useTranslation();
+  const [acceptedNotifications, setAcceptedNotifications] = useState([]);
+
+  const handleAccept = (id) => {
+    if (!acceptedNotifications.includes(id)) {
+      setAcceptedNotifications([...acceptedNotifications, id]);
+    }
+  };
 
   const renderNotificationMessage = (type) => {
     switch (type) {
@@ -46,12 +53,80 @@ const MaidNotificationScreen = ({ navigation }) => {
         return (
           <View style={styles.detailsContainer}>
             <Text>{t('Notification.locationShared')}</Text>
-            <Button 
-              title={t('Notification.viewLocation')}
-              onPress={() => navigation.navigate('LocationScreen', { location: notification.location })}
-            />
           </View>
         );
+      default:
+        return null;
+    }
+  };
+
+  const renderButtons = (item) => {
+    switch (item.type) {
+      case 'requestAccepted':
+        return (
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: '#A1C398' }]}
+            onPress={() => navigation.navigate('ChatScreen', { chatWith: item.ownerName })}
+          >
+            <Text style={styles.buttonText}>{t('Notification.chat')}</Text>
+          </TouchableOpacity>
+        );
+
+      case 'requestDeclined':
+        return (
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate('DetailsScreen', { notificationId: item.id })}
+          >
+            <Text style={styles.buttonText}>{t('Notification.seeDetails')}</Text>
+          </TouchableOpacity>
+        );
+
+      case 'newBooking':
+        return (
+          <View style={styles.buttonRow}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate('DetailsScreen', { notificationId: item.id })}
+            >
+              <Text style={styles.buttonText}>{t('Notification.seeDetails')}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => handleAccept(item.id)}
+            >
+              <Text style={styles.buttonText}>{t('Notification.accept')}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => console.log('Declined')}
+            >
+              <Text style={styles.buttonText}>{t('Notification.decline')}</Text>
+            </TouchableOpacity>
+
+            {acceptedNotifications.includes(item.id) && (
+              <TouchableOpacity
+                style={[styles.button, { backgroundColor: '#A1C398' }]}
+                onPress={() => navigation.navigate('ChatScreen', { chatWith: item.ownerName })}
+              >
+                <Text style={styles.buttonText}>{t('Notification.chat')}</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        );
+
+      case 'locationSharedByOwner':
+        return (
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate('LocationScreen', { location: item.location })}
+          >
+            <Text style={styles.buttonText}>{t('Notification.viewLocation')}</Text>
+          </TouchableOpacity>
+        );
+
       default:
         return null;
     }
@@ -68,19 +143,15 @@ const MaidNotificationScreen = ({ navigation }) => {
           data={notifications}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() => navigation.navigate('DetailsScreen', { notificationId: item.id })}
-            >
-              <Card style={styles.notificationCard} mode="elevated">
-                <Card.Content>
-                  <Text style={styles.notificationMessage}>
-                    {renderNotificationMessage(item.type)}
-                  </Text>
-                  {/* Show additional details based on the type of notification */}
-                  {renderNotificationDetails(item)}
-                </Card.Content>
-              </Card>
-            </TouchableOpacity>
+            <Card style={styles.notificationCard} mode="elevated">
+              <Card.Content>
+                <Text style={styles.notificationMessage}>
+                  {renderNotificationMessage(item.type)}
+                </Text>
+                {renderNotificationDetails(item)}
+                {renderButtons(item)}
+              </Card.Content>
+            </Card>
           )}
         />
       )}
@@ -120,5 +191,24 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     marginTop: 10,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 10,
+    gap: 10,
+  },
+  button: {
+    backgroundColor: '#87CBB9',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    marginTop: 10,
+    marginRight: 10,
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 14,
   },
 });

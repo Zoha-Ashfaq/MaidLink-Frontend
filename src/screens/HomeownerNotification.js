@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Button } from 'react-native';
 import { Card } from 'react-native-paper';
 import { useUserContext } from './UserContext';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +8,8 @@ const HomeownerNotificationScreen = ({ navigation }) => {
   const { notifications } = useUserContext();
   const { t } = useTranslation();
 
-  // Helper to get translated message based on type
+  const [acceptedNotifications, setAcceptedNotifications] = useState([]);
+
   const renderNotificationMessage = (type) => {
     switch (type) {
       case 'bookingConfirmed':
@@ -24,6 +25,17 @@ const HomeownerNotificationScreen = ({ navigation }) => {
     }
   };
 
+  const handleAccept = (id) => {
+    setAcceptedNotifications([...acceptedNotifications, id]);
+  };
+
+  const handleDecline = (id) => {
+    setAcceptedNotifications(acceptedNotifications.filter((item) => item !== id));
+    // Optionally, show a toast or perform some action
+  };
+
+  const isAccepted = (id) => acceptedNotifications.includes(id);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{t('Notification.notifications')}</Text>
@@ -35,17 +47,49 @@ const HomeownerNotificationScreen = ({ navigation }) => {
           data={notifications}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() => navigation.navigate('DetailsScreen', { notificationId: item.id })}
-            >
-              <Card style={styles.notificationCard} mode="elevated">
-                <Card.Content>
-                  <Text style={styles.notificationMessage}>
-                    {renderNotificationMessage(item.type)}
-                  </Text>
-                </Card.Content>
-              </Card>
-            </TouchableOpacity>
+            <Card style={styles.notificationCard} mode="elevated">
+              <Card.Content>
+                <Text style={styles.notificationMessage}>
+                  {renderNotificationMessage(item.type)}
+                </Text>
+
+                <View style={styles.buttonRow}>
+                  <TouchableOpacity
+                    style={styles.detailsButton}
+                    onPress={() => navigation.navigate('DetailsScreen', { notificationId: item.id })}
+                  >
+                    <Text style={styles.buttonText}>{t('Notification.seeDetails')}</Text>
+                  </TouchableOpacity>
+
+                  {!isAccepted(item.id) && (
+                    <>
+                      <TouchableOpacity
+                        style={styles.acceptButton}
+                        onPress={() => handleAccept(item.id)}
+                      >
+                       <Text style={styles.buttonText}>{t('Notification.accept')}</Text>
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        style={styles.declineButton}
+                        onPress={() => handleDecline(item.id)}
+                      >
+                        <Text style={styles.buttonText}>{t('Notification.decline')}</Text>
+                      </TouchableOpacity>
+                    </>
+                  )}
+
+                  {isAccepted(item.id) && (
+                    <TouchableOpacity
+                      style={styles.chatButton}
+                      onPress={() => navigation.navigate('ChatScreen', { notificationId: item.id })}
+                    >
+                      <Text style={styles.buttonText}>{t('Notification.chat')}</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </Card.Content>
+            </Card>
           )}
         />
       )}
@@ -54,6 +98,7 @@ const HomeownerNotificationScreen = ({ navigation }) => {
 };
 
 export default HomeownerNotificationScreen;
+
 
 
 const styles = StyleSheet.create({
@@ -83,5 +128,38 @@ const styles = StyleSheet.create({
   notificationMessage: {
     fontSize: 16,
     color: '#333',
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    marginTop: 10,
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  detailsButton: {
+    backgroundColor: '#6C63FF',
+    padding: 8,
+    borderRadius: 8,
+    marginRight: 10,
+  },
+  acceptButton: {
+    backgroundColor: '#4CAF50',
+    padding: 8,
+    borderRadius: 8,
+    marginRight: 10,
+  },
+  declineButton: {
+    backgroundColor: '#F44336',
+    padding: 8,
+    borderRadius: 8,
+    marginRight: 10,
+  },
+  chatButton: {
+    backgroundColor: '#2196F3',
+    padding: 8,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: '600',
   },
 });
