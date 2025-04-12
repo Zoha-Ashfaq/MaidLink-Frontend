@@ -17,7 +17,7 @@ const ProfileScreen = () => {
       <Text style={styles.header}>{i18n.t("ProfileManagement.profileManagement")}</Text>
 
       {/* Navigate to Edit Profile Screen */}
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("EditProfile") }>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("EditProfileScreen") }>
         <Text style={styles.buttonText}>{i18n.t("ProfileManagement.editProfile")}</Text>
       </TouchableOpacity>
 

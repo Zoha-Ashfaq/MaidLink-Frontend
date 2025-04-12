@@ -27,6 +27,11 @@ const HomeScreen = () => {
     { id: '2', name: 'Sana', location: 'Karachi', services: 'Babysitting', image: require('../../assets/pictures/maid1.jpg') },
   ];
 
+  // Function to navigate to Maid Details Screen
+  const handleMaidPress = (maidId) => {
+    navigation.navigate('MaidDetailsScreen', { maidId });  // Pass maidId to the details screen
+  };
+
   return (
     <View style={styles.container}>
       {/* Search Bar & Icons */}
@@ -74,7 +79,7 @@ const HomeScreen = () => {
                 <Text style={styles.maidLocation}>{item.location}</Text>
                 <Text style={styles.maidServices}>{item.services}</Text>
               </View>
-              <TouchableOpacity style={styles.bookButton}>
+              <TouchableOpacity style={styles.bookButton} onPress={() => handleMaidPress(item.id)}>
                 <Text style={styles.bookButtonText}>{t('Hometab.book')}</Text>
               </TouchableOpacity>
             </View>
@@ -82,8 +87,8 @@ const HomeScreen = () => {
         />
       )}
 
-   {/* Customize Tab - Form Fields */}
-   {selectedTab === 'customize' && (
+      {/* Customize Tab - Form Fields */}
+      {selectedTab === 'customize' && (
         <View style={styles.customizeContainer}>
           <Text style={styles.title}>{t('CustomizeTab.customizeOrder')}</Text>
           <TextInput
@@ -238,47 +243,5 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-  },
-  customizeContainer: {
-    padding: 20,
-    backgroundColor: '#F7FFE5',
-    borderRadius: 10,
-    flex: 1,  // Ensures it takes up full screen space
-    justifyContent: 'center',  // Vertically center the content
-    alignItems: 'center',  // Horizontally center the content
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 20,  // Space between title and fields
-  },
-  inputField: {
-    backgroundColor: '#D9D9D9',
-    padding: 8,
-    width: 350,  // Set a fixed width for the fields to make sure they're within the screen
-    height: 51,
-    marginVertical: 10,  // Slight space between fields and button
-    borderRadius: 0,  // Slight border radius for styling
-  },
-  searchButton: {
-    backgroundColor: '#66785F',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 0,
-    marginBottom: 15,
-    marginTop: 15,  // Space between last input and button
-    width: 350,  // Keep the width the same as the input fields
-    alignItems: 'center',
-  },
-  searchButtonText: {
-    color: '#FFFFFF',
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  searchButtonText: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: '600',
   },
 });

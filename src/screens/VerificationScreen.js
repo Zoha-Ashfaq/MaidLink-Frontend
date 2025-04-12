@@ -19,28 +19,30 @@ const VerificationScreen = () => {
 
   const [cnic, setCnic] = useState(null);
   const [criminalRecord, setCriminalRecord] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false); // For showing submission progress
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Handle document selection
   const handleDocumentPick = async (type) => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
-        type: '*/*', // Allows any type of file
+        type: '*/*',
+        copyToCacheDirectory: true,
+        multiple: false,
       });
-  
-      if (result.type === 'success' && result.uri) {
-        const file = {
-          name: result.name || 'Unknown File',
-          uri: result.uri,
-          type: result.mimeType || '*/*',
+
+      if (result?.assets?.length > 0) {
+        const file = result.assets[0];
+        const pickedFile = {
+          name: file.name || 'Unknown File',
+          uri: file.uri,
+          type: file.mimeType || '*/*',
         };
-  
+
         if (type === 'cnic') {
-          setCnic(file); // Save CNIC file details
+          setCnic(pickedFile);
         } else if (type === 'criminalRecord') {
-          setCriminalRecord(file); // Save Criminal Record file details
+          setCriminalRecord(pickedFile);
         }
-      } else if (result.type === 'cancel') {
+      } else if (result.canceled) {
         alert(t('alerts.documentPickerCancelled'));
       }
     } catch (error) {
@@ -49,16 +51,12 @@ const VerificationScreen = () => {
     }
   };
 
-  // Handle form submission
-  const handleSubmit = async () => { // Marking this function as async
+  const handleSubmit = async () => {
     if (!cnic || !criminalRecord) {
       alert(t('verificationScreen.uploadDocuments'));
       return;
     }
 
-    console.log('CNIC:', cnic);
-    console.log('Criminal Record:', criminalRecord);
-    
     const formData = new FormData();
     formData.append('cnic', {
       uri: cnic.uri,
@@ -71,22 +69,21 @@ const VerificationScreen = () => {
       type: criminalRecord.type,
     });
 
-    setIsSubmitting(true); // Set submission state to true to show the activity indicator
+    setIsSubmitting(true);
 
     try {
-      const response = await mockApiCall(formData); // Async API call
+      const response = await mockApiCall(formData);
       alert(`${t('alerts.registrationComplete')}\n\n${response.message}`);
+      navigation.navigate('Login'); // <-- Navigate to Login after successful submission
     } catch (error) {
       alert(t('alerts.submissionFailed'));
       console.error('Submission error:', error);
     } finally {
-      setIsSubmitting(false); // Reset the submission state after the process is complete
+      setIsSubmitting(false);
     }
   };
 
-  // Simulating backend submission with a mock function
   const mockApiCall = async (data) => {
-    console.log('Sending to backend:', data);
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({ status: 'success', message: 'Mock data received' });
@@ -94,62 +91,66 @@ const VerificationScreen = () => {
     });
   };
 
+  const renderFilePreview = (file) => {
+    if (!file) return null;
+    const isImage = file.type?.startsWith('image/');
+
+    return (
+      <View style={styles.previewContainer}>
+        {isImage ? (
+          <Image source={{ uri: file.uri }} style={styles.previewImage} />
+        ) : (
+          <Ionicons name="document" size={40} color="#66785F" />
+        )}
+        <Text style={styles.fileName}>{file.name}</Text>
+      </View>
+    );
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Back Arrow */}
       <TouchableOpacity style={styles.backArrow} onPress={() => navigation.goBack()}>
         <Ionicons name="arrow-back" size={24} color="#66785F" />
       </TouchableOpacity>
 
-      {/* Illustration */}
       <Image
-        source={require('../../assets/pictures/certification.png')} // Replace with correct path
+        source={require('../../assets/pictures/certification.png')}
         style={styles.illustration}
       />
 
-      {/* Title and Subtitle */}
       <Text style={styles.title}>{t('verificationScreen.title')}</Text>
       <Text style={styles.subtitle}>{t('verificationScreen.subtitle')}</Text>
 
-      {/* Status Bar */}
       <View style={styles.statusBar}>
-        <View style={[styles.circle, styles.completed]} />
-        <View style={[styles.line, styles.completedLine]} />
-        <View style={[styles.circle, styles.completed]} />
-        <View style={[styles.line, styles.completedLine]} />
-        <View style={[styles.circle, styles.completed]} />
-        <View style={[styles.line, styles.completedLine]} />
-        <View style={[styles.circle, styles.completed]} />
+        {[...Array(4)].map((_, i) => (
+          <React.Fragment key={i}>
+            <View style={[styles.circle, styles.completed]} />
+            {i < 3 && <View style={[styles.line, styles.completedLine]} />}
+          </React.Fragment>
+        ))}
       </View>
 
       {/* CNIC Upload */}
       <TouchableOpacity style={styles.uploadButton} onPress={() => handleDocumentPick('cnic')}>
         <Text style={styles.uploadButtonText}>
-          {cnic ? `${t('verificationScreen.uploaded')}: ${cnic.name}` : t('verificationScreen.uploadCnic')}
+          {t('verificationScreen.uploadCnic')}
         </Text>
       </TouchableOpacity>
+      {renderFilePreview(cnic)}
 
       {/* Criminal Record Upload */}
-      <TouchableOpacity
-        style={styles.uploadButton}
-        onPress={() => handleDocumentPick('criminalRecord')}
-      >
+      <TouchableOpacity style={styles.uploadButton} onPress={() => handleDocumentPick('criminalRecord')}>
         <Text style={styles.uploadButtonText}>
-          {criminalRecord
-            ? `${t('verificationScreen.uploaded')}: ${criminalRecord.name}`
-            : t('verificationScreen.uploadCriminalRecord')}
+          {t('verificationScreen.uploadCriminalRecord')}
         </Text>
       </TouchableOpacity>
+      {renderFilePreview(criminalRecord)}
 
-      {/* Skip Button */}
-      <TouchableOpacity
-        style={styles.skipButton}
-        onPress={() => navigation.navigate('Login')}
-      >
+      {/* Skip & Submit */}
+      <TouchableOpacity style={styles.skipButton} onPress={() => navigation.navigate('Login')}>
         <Text style={styles.skipText}>{t('profilePictureScreen.skip')}</Text>
       </TouchableOpacity>
 
-      {/* Submit Button */}
       <TouchableOpacity
         style={[styles.submitButton, isSubmitting && styles.disabledButton]}
         onPress={isSubmitting ? null : handleSubmit}
@@ -227,7 +228,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: '100%',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   uploadButtonText: {
     color: '#FFFFFF',
@@ -240,7 +241,7 @@ const styles = StyleSheet.create({
     padding: 15,
     width: '100%',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 20,
     marginBottom: 5,
   },
   skipButton: {
@@ -261,6 +262,22 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     opacity: 0.7,
+  },
+  previewContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+    marginTop: 5,
+  },
+  previewImage: {
+    width: 100,
+    height: 100,
+    resizeMode: 'cover',
+    borderRadius: 10,
+    marginBottom: 5,
+  },
+  fileName: {
+    fontSize: 14,
+    color: '#555',
   },
 });
 

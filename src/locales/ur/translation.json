@@ -212,6 +212,44 @@
   "location": "لوکیشن",
   "errorFetchingDetails": "تفصیلات حاصل کرنے میں خرابی۔ براہ کرم دوبارہ کوشش کریں۔"
 },
+"HomeownerDetails": {
+    "Location": "مقام",
+    "JobType": "کام کی نوعیت",
+    "Duration": "مدت",
+    "ChargesPerHour": "فی گھنٹہ قیمت",
+    "RequestNow": "ابھی درخواست کریں"
+  },
+  "MaidDetails": {
+    "CityOfService": "خدمت کا شہر",
+    "YearsOfExperience": "تجربہ کے سال",
+    "RatePerHour": "فی گھنٹہ قیمت",
+    "ServicesOffered": "پیش کی جانے والی خدمات",
+    "PoliceVerificationStatus": "پولیس تصدیق کی حیثیت",
+    "Verified": "مصدقہ",
+    "NotVerified": "غیر مصدقہ",
+    "BookNow": "ابھی بک کریں",
+    "Years": "سال"
+  },
+  "editprofile" :{
+    "editProfile": "پروفائل ایڈیٹ کریں",
+  "fullName": "مکمل نام",
+  "username": "یوزر نیم",
+  "email": "ای میل",
+  "phoneNumber": "فون نمبر",
+  "password": "پاس ورڈ",
+  "homeAddress": "گھر کا پتا",
+  "cityOfService": "سروس کا شہر",
+  "yearsOfExperience": "تجربے کے سال",
+  "ratePerHour": "فی گھنٹہ شرح",
+  "availability": "دستیابی (فل ٹائم / پارٹ ٹائم)",
+  "servicesOffered": "پیش کی جانے والی خدمات",
+  "pickProfilePicture": "پروفائل تصویر منتخب کریں",
+  "uploadCNIC": "سی این آئی سی اپ لوڈ کریں",
+  "cnicSelected": "سی این آئی سی منتخب کیا گیا",
+  "uploadPoliceCertificate": "پولیس سرٹیفکیٹ اپ لوڈ کریں",
+  "certificateSelected": "سرٹیفکیٹ منتخب کیا گیا",
+  "save": "محفوظ کریں"
+  },
   "Conversation": {
     "title": "بات چیت"
   },

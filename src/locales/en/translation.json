@@ -213,6 +213,44 @@
     "location": "Location",
     "errorFetchingDetails": "Error fetching details. Please try again later."
   },
+  "HomeownerDetails": {
+    "Location": "Location",
+    "JobType": "Job Type",
+    "Duration": "Duration",
+    "ChargesPerHour": "Charges per Hour",
+    "RequestNow": "Request Now"
+  },
+  "MaidDetails": {
+    "CityOfService": "City of Service",
+    "YearsOfExperience": "Years of Experience",
+    "RatePerHour": "Rate per Hour",
+    "ServicesOffered": "Services Offered",
+    "PoliceVerificationStatus": "Police Verification Status",
+    "Verified": "Verified",
+    "NotVerified": "Not Verified",
+    "BookNow": "Book Now",
+    "Years": "years"
+  },
+  "editprofile" :{
+    "editProfile": "Edit Profile",
+    "fullName": "Full Name",
+    "username": "Username",
+    "email": "Email",
+    "phoneNumber": "Phone Number",
+    "password": "Password",
+    "homeAddress": "Home Address",
+    "cityOfService": "City of Service",
+    "yearsOfExperience": "Years of Experience",
+    "ratePerHour": "Rate Per Hour",
+    "availability": "Availability (Full Time / Part Time)",
+    "servicesOffered": "Services Offered",
+    "pickProfilePicture": "Pick Profile Picture",
+    "uploadCNIC": "Upload CNIC",
+    "cnicSelected": "CNIC Selected",
+    "uploadPoliceCertificate": "Upload Police Certificate",
+    "certificateSelected": "Certificate Selected",
+    "save": "Save"
+  },
   "Conversation": {
     "title": "Conversations"
   },

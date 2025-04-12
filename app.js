@@ -31,6 +31,9 @@ import HomeownerNotification from './src/screens/HomeownerNotification';
 import MaidNotification from './src/screens/MaidNotification';
 import DetailsScreen from './src/screens/DetailsScreen';
 import MyBookings from './src/screens/MyBookings';
+import MaidDetailsScreen from './src/screens/MaidDetailsScreen';
+import HomeownerDetailsScreen from './src/screens/HomeownerDetailsScreen';
+import EditProfileScreen from './src/screens/EditProfileScreen';
 
 const Stack = createStackNavigator(); // Initialize stack navigator
 
@@ -70,6 +73,9 @@ const App = () => {
             <Stack.Screen name="MaidNotification" component={MaidNotification} />
             <Stack.Screen name="DetailsScreen" component={DetailsScreen} />
             <Stack.Screen name="MyBookings" component={MyBookings} />
+            <Stack.Screen name="MaidDetailsScreen" component={MaidDetailsScreen} />
+            <Stack.Screen name="HomeownerDetailsScreen" component={HomeownerDetailsScreen} />
+            <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
           </Stack.Navigator>
         </SafeAreaView>
       </NavigationContainer>

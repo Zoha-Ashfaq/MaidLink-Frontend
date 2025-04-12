@@ -41,19 +41,22 @@ const MaidHomeScreen = () => {
         data={jobs}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.maidCard}>
-            <Image source={item.image} style={styles.maidImage} />
-            <View style={styles.maidDetails}>
-              <Text style={styles.maidName}>{item.homeowner}</Text>
-              <Text style={styles.maidLocation}>{item.location}</Text>
-              <Text style={styles.maidServices}>{item.task}</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('HomeownerDetailsScreen', { job: item })}>
+            <View style={styles.maidCard}>
+              <Image source={item.image} style={styles.maidImage} />
+              <View style={styles.maidDetails}>
+                <Text style={styles.maidName}>{item.homeowner}</Text>
+                <Text style={styles.maidLocation}>{item.location}</Text>
+                <Text style={styles.maidServices}>{item.task}</Text>
+              </View>
+              <TouchableOpacity style={styles.bookButton}>
+                <Text style={styles.bookButtonText}>{t('MaidHometab.request')}</Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.bookButton}>
-              <Text style={styles.bookButtonText}>{t('MaidHometab.request')}</Text>
-            </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
         )}
       />
+
 
       {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
