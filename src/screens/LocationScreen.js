@@ -5,6 +5,7 @@ import MapView, { Marker } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
+import BottomNavigation from './BottomNavigation';
 
 const LocationScreen = ({ route }) => {
   const { t } = useTranslation();
@@ -127,24 +128,11 @@ const LocationScreen = ({ route }) => {
         </View>
       )}
 
-      {/* Bottom Navigation */}
-      <View style={styles.bottomNav}>
-        <TouchableOpacity onPress={() => navigation.navigate('HometabScreen')}>
-          <Ionicons name="home" size={34} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('ChatListScreen')}>
-          <Ionicons name="chatbubbles" size={34} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('LocationScreen')}>
-          <Ionicons name="location" size={34} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Video')}>
-          <Ionicons name="videocam" size={34} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-          <Ionicons name="person" size={34} color="white" />
-        </TouchableOpacity>
-      </View>
+       {/* Bottom Navigation */}
+       <View style={styles.bottomNav}>
+
+<BottomNavigation />
+</View>
     </View>
   );
 };

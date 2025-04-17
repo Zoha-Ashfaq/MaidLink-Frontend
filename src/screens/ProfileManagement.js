@@ -1,60 +1,119 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Switch } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Switch, Alert, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from '@expo/vector-icons';
 import i18n from '../../i18n';
+import { useUser } from './UserContext';
+import api from '../services/api';
+import BottomNavigation from './BottomNavigation';
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const [language, setLanguage] = useState("English");
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { user, logout } = useUser();
 
   const toggleLanguage = () => {
     setLanguage(prevLang => (prevLang === "English" ? "Urdu" : "English"));
+  };
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      // Determine endpoint based on user.type (from login response) or role
+      const endpoint = user?.type === 'maid' ? 'maid' : 'user';
+      console.log('Attempting logout for:', endpoint);
+      
+      // Make logout API call with token
+      const response = await api.post(`/${endpoint}/logout`, {}, {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log('Logout response:', response.data);
+      
+      // Clear local storage and context
+      await logout();
+      
+      // Navigate to login screen
+      navigation.replace("Login");
+      
+    } catch (error) {
+      console.error('Detailed logout error:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+      
+      // Special handling for 400 errors
+      if (error.response?.status === 400) {
+        // Token might be invalid, proceed with client-side cleanup
+        await logout();
+        navigation.replace("Login");
+        return;
+      }
+      
+      Alert.alert(
+        'Logout Error',
+        error.response?.data?.message || 'Failed to logout. Please try again.',
+        [{ text: 'OK' }]
+      );
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>{i18n.t("ProfileManagement.profileManagement")}</Text>
 
-      {/* Navigate to Edit Profile Screen */}
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("EditProfileScreen") }>
+      {/* Edit Profile */}
+      <TouchableOpacity 
+        style={styles.button} 
+        onPress={() => navigation.navigate("EditProfileScreen")}
+        disabled={isLoggingOut}
+      >
         <Text style={styles.buttonText}>{i18n.t("ProfileManagement.editProfile")}</Text>
       </TouchableOpacity>
 
-      {/* Change Language */}
+      {/* Language Toggle */}
       <View style={styles.section}>
         <Text style={styles.label}>{i18n.t("ProfileManagement.languageLabel")}: {language}</Text>
-        <Switch value={language === "Urdu"} onValueChange={toggleLanguage} />
+        <Switch 
+          value={language === "Urdu"} 
+          onValueChange={toggleLanguage}
+          disabled={isLoggingOut}
+        />
       </View>
 
       {/* My Bookings */}
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("MyBookings")}>
+      <TouchableOpacity 
+        style={styles.button} 
+        onPress={() => navigation.navigate("MyBookings")}
+        disabled={isLoggingOut}
+      >
         <Text style={styles.buttonText}>{i18n.t("ProfileManagement.myBookings")}</Text>
       </TouchableOpacity>
 
-      {/* Log Out */}
-      <TouchableOpacity style={styles.button} onPress={() => navigation.replace("Login") }>
-        <Text style={styles.buttonText}>{i18n.t("ProfileManagement.logOut")}</Text>
+      {/* Log Out Button with ActivityIndicator */}
+      <TouchableOpacity 
+        style={[styles.button, isLoggingOut && styles.disabledButton]} 
+        onPress={handleLogout}
+        disabled={isLoggingOut}
+      >
+        {isLoggingOut ? (
+          <ActivityIndicator size="small" color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>{i18n.t("ProfileManagement.logOut")}</Text>
+        )}
       </TouchableOpacity>
 
-      {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
-        <TouchableOpacity onPress={() => navigation.navigate('HometabScreen')}>
-          <Ionicons name="home" size={34} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('ChatListScreen')}>
-          <Ionicons name="chatbubbles" size={34} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('LocationScreen')}>
-          <Ionicons name="location" size={34} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('VideoTutorial')}>
-          <Ionicons name="videocam" size={34} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('ProfileManagement')}>
-          <Ionicons name="person" size={34} color="white" />
-        </TouchableOpacity>
-      </View>
+        <BottomNavigation />
+        </View>
+
     </View>
   );
 };
@@ -96,6 +155,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 10,
     borderRadius: 0,
+  },
+  disabledButton: {
+    opacity: 0.6,
   },
   buttonText: {
     color: "#fff",

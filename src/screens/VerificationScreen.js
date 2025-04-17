@@ -6,120 +6,247 @@ import {
   StyleSheet,
   ScrollView,
   Image,
-  ActivityIndicator,
+  Alert,
+  Platform,
+  ActivityIndicator
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import * as DocumentPicker from 'expo-document-picker';
-import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
+import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system'; // Add this import
+import * as Haptics from 'expo-haptics';
+import { useTranslation } from 'react-i18next';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { registerMaid } from '../services/api';
 
 const VerificationScreen = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
-
-  const [cnic, setCnic] = useState(null);
-  const [criminalRecord, setCriminalRecord] = useState(null);
+  const route = useRoute();
+  const [cnicFile, setCnicFile] = useState(null);
+  const [criminalRecordFile, setCriminalRecordFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [networkError, setNetworkError] = useState(false);
 
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
   const handleDocumentPick = async (type) => {
     try {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  
       const result = await DocumentPicker.getDocumentAsync({
-        type: '*/*',
+        type: ['image/*', 'application/pdf'],
         copyToCacheDirectory: true,
         multiple: false,
       });
-
-      if (result?.assets?.length > 0) {
-        const file = result.assets[0];
-        const pickedFile = {
-          name: file.name || 'Unknown File',
-          uri: file.uri,
-          type: file.mimeType || '*/*',
-        };
-
-        if (type === 'cnic') {
-          setCnic(pickedFile);
-        } else if (type === 'criminalRecord') {
-          setCriminalRecord(pickedFile);
-        }
-      } else if (result.canceled) {
-        alert(t('alerts.documentPickerCancelled'));
+  
+      console.log('DocumentPicker result:', result);
+  
+      if (result.canceled || !result.assets || result.assets.length === 0) {
+        console.log('User cancelled or no file selected');
+        return;
       }
+  
+      const selectedAsset = result.assets[0];
+  
+      if (!selectedAsset?.uri) {
+        console.error('Invalid document result:', selectedAsset);
+        Alert.alert('Error', 'Failed to get file URI. Please try again.');
+        return;
+      }
+  
+      const fileName =
+        selectedAsset.name ||
+        `${type}_${Date.now()}.${selectedAsset.uri.split('.').pop() || 'jpg'}`;
+  
+      const fileData = {
+        uri: selectedAsset.uri,
+        type: selectedAsset.mimeType || 'application/octet-stream',
+        name: fileName,
+        size: selectedAsset.size || 0,
+      };
+  
+      console.log(`Selected ${type} file:`, fileData);
+  
+      // On Android, copy content:// files to cache directory
+      if (Platform.OS === 'android' && fileData.uri.startsWith('content://')) {
+        try {
+          const cacheFilePath = FileSystem.cacheDirectory + fileData.name;
+          await FileSystem.copyAsync({
+            from: fileData.uri,
+            to: cacheFilePath,
+          });
+          fileData.uri = cacheFilePath;
+          console.log('Copied file to cache:', cacheFilePath);
+        } catch (error) {
+          console.warn('Failed to copy file to cache, using original URI:', error);
+        }
+      }
+  
+      if (type === 'cnic') {
+        setCnicFile(fileData);
+      } else {
+        setCriminalRecordFile(fileData);
+      }
+  
+      const fileInfo = await FileSystem.getInfoAsync(fileData.uri);
+      console.log('File info after pick:', fileInfo);
+  
+      Alert.alert('Success', `${type.toUpperCase()} file selected successfully`);
     } catch (error) {
-      console.error('Document picking error:', error);
-      alert(t('alerts.documentPickerError'));
+      console.error('File pick error:', error);
+      Alert.alert('Error', 'Unable to pick file. Please try again.');
     }
   };
 
   const handleSubmit = async () => {
-    if (!cnic || !criminalRecord) {
-      alert(t('verificationScreen.uploadDocuments'));
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('cnic', {
-      uri: cnic.uri,
-      name: cnic.name,
-      type: cnic.type,
-    });
-    formData.append('criminalRecord', {
-      uri: criminalRecord.uri,
-      name: criminalRecord.name,
-      type: criminalRecord.type,
-    });
-
-    setIsSubmitting(true);
-
     try {
-      const response = await mockApiCall(formData);
-      alert(`${t('alerts.registrationComplete')}\n\n${response.message}`);
-      navigation.navigate('Login'); // <-- Navigate to Login after successful submission
+      if (!cnicFile || !criminalRecordFile) {
+        Alert.alert('Error', 'Please upload both documents');
+        return;
+      }
+  
+      setIsSubmitting(true);
+      const formData = new FormData();
+      const userData = route.params?.userData;
+  
+      // Log the incoming data for debugging
+      console.log('Submitting user data:', userData);
+  
+      // Add basic user data
+      formData.append('userName', userData.userName);
+      formData.append('phone', userData.phone);
+      formData.append('password', userData.password);
+      formData.append('serviceCity', userData.serviceCity);
+      formData.append('experience', userData.yearsOfExperience);
+      formData.append('ratePerHour', userData.ratePerHour);
+      formData.append('availability', userData.workAvailability);
+      formData.append('services', JSON.stringify(userData.services || []));
+      formData.append('role', 'maid');
+      formData.append('fcm', userData.fcm || 'temp_dummy_fcm_token'); 
+
+      // Add files with proper mime types
+      if (userData.profileImage) {
+        const profileImageFile = {
+          uri: userData.profileImage,
+          type: 'image/jpeg',
+          name: 'profile.jpg'
+        };
+        formData.append('profileImg', profileImageFile);
+      }
+  
+      // Add CNIC file
+      const cnicFileData = {
+        uri: cnicFile.uri,
+        type: cnicFile.type || 'image/jpeg',
+        name: cnicFile.name || 'cnic.jpg'
+      };
+      formData.append('cnic', cnicFileData);
+  
+      // Add Criminal Record file
+      const criminalFileData = {
+        uri: criminalRecordFile.uri,
+        type: criminalRecordFile.type || 'image/jpeg',
+        name: criminalRecordFile.name || 'criminal_record.jpg'
+      };
+      formData.append('criminalRecordCertificate', criminalFileData);
+  
+      console.log('FormData contents:', Object.fromEntries(formData._parts));
+  
+      const response = await registerMaid(formData);
+      
+      if (response.status) {
+        Alert.alert('Success', 'Registration successful!', [
+          { text: 'OK', onPress: () => navigation.navigate('Login') }
+        ]);
+      }
     } catch (error) {
-      alert(t('alerts.submissionFailed'));
-      console.error('Submission error:', error);
+      console.error('Register Maid Error Details:', error);
+      Alert.alert('Error', error.message || 'Registration failed');
     } finally {
       setIsSubmitting(false);
     }
   };
-
-  const mockApiCall = async (data) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ status: 'success', message: 'Mock data received' });
-      }, 2000);
-    });
-  };
+  
 
   const renderFilePreview = (file) => {
     if (!file) return null;
     const isImage = file.type?.startsWith('image/');
-
+  
+    console.log('Rendering preview for file:', {
+      uri: file.uri,
+      type: file.type,
+      isImage
+    });
+  
     return (
       <View style={styles.previewContainer}>
         {isImage ? (
-          <Image source={{ uri: file.uri }} style={styles.previewImage} />
+          <>
+            <Image 
+              source={{ 
+                uri: file.uri, 
+                // Force refresh and avoid caching issues
+                cache: 'reload', 
+                // Add a timestamp to prevent caching
+                headers: { 'Cache-Control': 'no-cache' }
+              }} 
+              style={styles.previewImage} 
+              resizeMode="contain"
+              onLoadStart={() => console.log('Image load started')}
+              onLoad={() => console.log('Image loaded successfully')}
+              onError={(e) => console.error('Image load error:', e.nativeEvent.error)}
+            />
+            <TouchableOpacity 
+              style={styles.viewImageButton}
+              onPress={() => console.log('View full image:', file.uri)}
+            >
+              <Text style={styles.viewImageText}>View Full Image</Text>
+            </TouchableOpacity>
+          </>
         ) : (
-          <Ionicons name="document" size={40} color="#66785F" />
+          <View style={styles.documentPreview}>
+            <Ionicons name="document" size={60} color="#66785F" />
+            <Text style={styles.documentTypeText}>
+              {file.type?.split('/')[1]?.toUpperCase() || 'Document'}
+            </Text>
+          </View>
         )}
-        <Text style={styles.fileName}>{file.name}</Text>
+        <Text style={styles.fileName} numberOfLines={1} ellipsizeMode="middle">
+          {file.name}
+        </Text>
+        <Text style={styles.fileSize}>
+          {file.size ? `${(file.size / (1024 * 1024)).toFixed(2)} MB` : 'Unknown size'}
+        </Text>
       </View>
     );
   };
-
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <TouchableOpacity style={styles.backArrow} onPress={() => navigation.goBack()}>
+    <ScrollView 
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
+    >
+      <TouchableOpacity 
+        style={styles.backArrow} 
+        onPress={() => navigation.goBack()}
+        activeOpacity={0.7}
+      >
         <Ionicons name="arrow-back" size={24} color="#66785F" />
       </TouchableOpacity>
 
       <Image
         source={require('../../assets/pictures/certification.png')}
         style={styles.illustration}
+        resizeMode="contain"
       />
 
       <Text style={styles.title}>{t('verificationScreen.title')}</Text>
       <Text style={styles.subtitle}>{t('verificationScreen.subtitle')}</Text>
+
+      {networkError && (
+        <View style={styles.networkError}>
+          <Ionicons name="warning" size={20} color="#FF3B30" />
+          <Text style={styles.networkErrorText}>Network connection error</Text>
+        </View>
+      )}
 
       <View style={styles.statusBar}>
         {[...Array(4)].map((_, i) => (
@@ -130,37 +257,62 @@ const VerificationScreen = () => {
         ))}
       </View>
 
-      {/* CNIC Upload */}
-      <TouchableOpacity style={styles.uploadButton} onPress={() => handleDocumentPick('cnic')}>
-        <Text style={styles.uploadButtonText}>
-          {t('verificationScreen.uploadCnic')}
-        </Text>
-      </TouchableOpacity>
-      {renderFilePreview(cnic)}
+      {/* CNIC Upload Section */}
+      <View style={styles.uploadSection}>
+        <TouchableOpacity 
+          style={[styles.uploadButton, isSubmitting && styles.buttonDisabled]} 
+          onPress={() => handleDocumentPick('cnic')}
+          activeOpacity={0.7}
+          disabled={isSubmitting}
+        >
+          <Ionicons name="cloud-upload" size={24} color="white" style={styles.uploadIcon} />
+          <Text style={styles.uploadButtonText}>
+            {t('verificationScreen.uploadCnic')}
+          </Text>
+        </TouchableOpacity>
+        {renderFilePreview(cnicFile)}
+      </View>
 
-      {/* Criminal Record Upload */}
-      <TouchableOpacity style={styles.uploadButton} onPress={() => handleDocumentPick('criminalRecord')}>
-        <Text style={styles.uploadButtonText}>
-          {t('verificationScreen.uploadCriminalRecord')}
-        </Text>
-      </TouchableOpacity>
-      {renderFilePreview(criminalRecord)}
+      {/* Criminal Record Upload Section */}
+      <View style={styles.uploadSection}>
+        <TouchableOpacity 
+          style={[styles.uploadButton, isSubmitting && styles.buttonDisabled]} 
+          onPress={() => handleDocumentPick('criminal')}
+          activeOpacity={0.7}
+          disabled={isSubmitting}
+        >
+          <Ionicons name="cloud-upload" size={24} color="white" style={styles.uploadIcon} />
+          <Text style={styles.uploadButtonText}>
+            {t('verificationScreen.uploadCriminalRecord')}
+          </Text>
+        </TouchableOpacity>
+        {renderFilePreview(criminalRecordFile)}
+      </View>
 
-      {/* Skip & Submit */}
-      <TouchableOpacity style={styles.skipButton} onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.skipText}>{t('profilePictureScreen.skip')}</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[styles.submitButton, isSubmitting && styles.disabledButton]}
-        onPress={isSubmitting ? null : handleSubmit}
+      {/* Submit Button */}
+      <TouchableOpacity 
+        style={[styles.submitButton, isSubmitting && styles.buttonDisabled]} 
+        onPress={handleSubmit}
+        activeOpacity={0.7}
         disabled={isSubmitting}
       >
         {isSubmitting ? (
-          <ActivityIndicator color="#fff" />
+          <ActivityIndicator color="white" />
         ) : (
-          <Text style={styles.submitButtonText}>{t('verificationScreen.submit')}</Text>
+          <Text style={styles.submitButtonText}>
+            {t('verificationScreen.submit')}
+          </Text>
         )}
+      </TouchableOpacity>
+
+      {/* Skip Button */}
+      <TouchableOpacity 
+        style={styles.skipButton} 
+        onPress={() => navigation.navigate('Login')}
+        activeOpacity={0.7}
+        disabled={isSubmitting}
+      >
+        <Text style={styles.skipText}>{t('profilePictureScreen.skip')}</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -169,47 +321,60 @@ const VerificationScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#F7FFE5',
     padding: 20,
+    backgroundColor: '#F7FFE5',
+    alignItems: 'center',
+    paddingTop: 60,
   },
   backArrow: {
-    alignSelf: 'flex-start',
-    marginBottom: 20,
+    position: 'absolute',
+    top: 40,
+    left: 20,
+    zIndex: 1,
+    padding: 10,
   },
   illustration: {
-    width: 150,
-    height: 150,
-    alignSelf: 'center',
-    resizeMode: 'contain',
+    width: 200,
+    height: 200,
     marginBottom: 20,
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
-    color: 'black',
+    marginBottom: 10,
+    color: '#66785F',
     textAlign: 'center',
-    marginBottom: 5,
   },
   subtitle: {
     fontSize: 16,
-    color: '#555',
+    color: '#666',
     textAlign: 'center',
     marginBottom: 30,
+    paddingHorizontal: 20,
+  },
+  networkError: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFEBEE',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 15,
+  },
+  networkErrorText: {
+    color: '#FF3B30',
+    marginLeft: 5,
   },
   statusBar: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
     marginBottom: 30,
+    justifyContent: 'center',
   },
   circle: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    borderWidth: 2,
-    borderColor: '#ddd',
-    backgroundColor: '#66785F',
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#E0E0E0',
   },
   completed: {
     backgroundColor: '#66785F',
@@ -217,67 +382,91 @@ const styles = StyleSheet.create({
   line: {
     width: 30,
     height: 2,
-    backgroundColor: '#ddd',
+    backgroundColor: '#E0E0E0',
+    marginHorizontal: 5,
   },
   completedLine: {
     backgroundColor: '#66785F',
   },
+  uploadSection: {
+    width: '100%',
+    marginBottom: 25,
+  },
   uploadButton: {
-    backgroundColor: '#91AC8F',
-    paddingVertical: 15,
-    borderRadius: 5,
+    backgroundColor: '#66785F',
+    padding: 15,
+    borderRadius: 8,
     width: '100%',
     alignItems: 'center',
-    marginBottom: 10,
+    justifyContent: 'center',
+    flexDirection: 'row',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
+  uploadIcon: {
+    marginRight: 10,
   },
   uploadButtonText: {
-    color: '#FFFFFF',
+    color: 'white',
     fontSize: 16,
     fontWeight: '600',
-  },
-  submitButton: {
-    backgroundColor: '#66785F',
-    borderRadius: 5,
-    padding: 15,
-    width: '100%',
-    alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 5,
-  },
-  skipButton: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-  },
-  skipText: {
-    color: '#D9D9D9',
-    fontSize: 16,
-    fontWeight: '600',
-    textDecorationLine: 'underline',
-  },
-  submitButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  disabledButton: {
-    opacity: 0.7,
   },
   previewContainer: {
     alignItems: 'center',
-    marginBottom: 20,
-    marginTop: 5,
+    marginTop: 10,
+    width: '100%',
   },
   previewImage: {
-    width: 100,
-    height: 100,
-    resizeMode: 'cover',
-    borderRadius: 10,
+    width: 150,
+    height: 150,
+    borderRadius: 8,
     marginBottom: 5,
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
   fileName: {
     fontSize: 14,
-    color: '#555',
+    color: '#666',
+    maxWidth: '80%',
+    textAlign: 'center',
+  },
+  fileSize: {
+    fontSize: 12,
+    color: '#999',
+    marginTop: 2,
+  },
+  submitButton: {
+    backgroundColor: '#66785F',
+    padding: 15,
+    borderRadius: 8,
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 20,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
+  buttonDisabled: {
+    backgroundColor: '#A8A8A8',
+  },
+  submitButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  skipButton: {
+    marginTop: 15,
+    padding: 10,
+  },
+  skipText: {
+    color: '#66785F',
+    fontSize: 16,
+    fontWeight: '500',
   },
 });
 

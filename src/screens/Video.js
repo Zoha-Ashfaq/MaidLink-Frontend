@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Linking } from "react-native"
 import { Ionicons, Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import i18n from '../../i18n'; // Assuming you have an i18n setup
+import BottomNavigation from './BottomNavigation';
 
 const VideoTutorialScreen = () => {
   const navigation = useNavigation();
@@ -46,24 +47,10 @@ const VideoTutorialScreen = () => {
         ))}
       </View>
 
-      {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
-        <TouchableOpacity onPress={() => navigation.navigate('HometabScreen')}>
-          <Ionicons name="home" size={34} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('ChatListScreen')}>
-          <Ionicons name="chatbubbles" size={34} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('LocationScreen')}>
-          <Ionicons name="location" size={34} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('VideoTutorial')}>
-          <Ionicons name="videocam" size={34} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('ProfileManagement')}>
-          <Ionicons name="person" size={34} color="white" />
-        </TouchableOpacity>
-      </View>
+        <BottomNavigation /> 
+          </View>
+
     </View>
   );
 };

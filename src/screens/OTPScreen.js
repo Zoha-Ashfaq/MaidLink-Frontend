@@ -1,15 +1,32 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next'; // Import useTranslation hook
 import { Ionicons } from '@expo/vector-icons';
+import { verifyOTP, sendOTP } from '../services/api';
 
-const OTPScreen = ({ navigation }) => {
+const OTPScreen = ({ navigation, route }) => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const otpInputs = useRef([]);
   
   // Initialize translation hook
   const { t } = useTranslation();
+  const { phone, serverOtp } = route.params || {};
+
+  // Auto-fill OTP when received
+  useEffect(() => {
+    if (serverOtp) {
+      console.log('Auto-filling OTP:', serverOtp);
+      const otpArray = serverOtp.toString().split('');
+      setOtp(otpArray);
+      
+      // Auto-verify after a short delay
+      setTimeout(() => {
+        verifyOtpCode(otpArray.join(''));
+      }, 500);
+    }
+  }, [serverOtp]);
 
   const handleChange = (index, value) => {
     const newOtp = [...otp];
@@ -23,16 +40,43 @@ const OTPScreen = ({ navigation }) => {
     setOtp(newOtp);
   };
 
-  const verifyOtp = () => {
-    const enteredOtp = otp.join('');
-    const correctOtp = '123456'; // Replace this with your actual OTP verification logic
+  const verifyOtpCode = async (manualOtp) => {
+    const enteredOtp = manualOtp || otp.join('');
+    console.log('Verifying OTP:', enteredOtp);
+    
+    if (enteredOtp.length !== 6) {
+      setError(t('errorMessage'));
+      return;
+    }
 
-    if (enteredOtp === correctOtp) {
+    try {
+      setLoading(true);
       setError('');
-      navigation.navigate('Login');
-    } else {
-      setError(t('errorMessage')); // Use translation for error message
-      resetOtp(); // Clear OTP on invalid entry
+      
+      const response = await verifyOTP(phone, enteredOtp);
+      console.log('Verify OTP Response:', response);
+      
+      if (response.status) {
+        Alert.alert(
+          t('success'),
+          t('otpVerified'),
+          [
+            {
+              text: 'OK',
+              onPress: () => navigation.navigate('Login')
+            }
+          ]
+        );
+      } else {
+        setError(response.msg || t('errorMessage'));
+        resetOtp();
+      }
+    } catch (error) {
+      console.error('Verification Error:', error);
+      setError(error.response?.data?.msg || t('errorMessage'));
+      resetOtp();
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -40,19 +84,30 @@ const OTPScreen = ({ navigation }) => {
     setOtp(['', '', '', '', '', '']); // Clear OTP array
     otpInputs.current[0].focus(); // Move focus back to the first input
   };
-  const handleSendCode = () => {
-    if (validatePhoneNumber(phoneNumber)) {
-      Alert.alert(i18n.t('otpSent'), i18n.t('otpMessage'));
+
+  const handleResendCode = async () => {
+    try {
+      setLoading(true);
       setError('');
-      navigation.navigate('OTP'); // Navigate to OTP screen
-    } else {
-      setError(i18n.t('invalidNumber'));
+      
+      const response = await sendOTP(phone);
+      
+      if (response.status) {
+        route.params.serverOtp = response.otp;
+        // Auto-fill will happen through useEffect
+        Alert.alert(t('otpSent'), t('otpMessage'));
+      } else {
+        setError(response.msg || t('otpError'));
+      }
+    } catch (error) {
+      console.error('Resend Error:', error);
+      setError(error.response?.data?.msg || t('otpError'));
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    
-
     <View style={styles.container}>
       {/* Back Icon */}
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backIconContainer}>
@@ -72,6 +127,7 @@ const OTPScreen = ({ navigation }) => {
             onChangeText={(value) => handleChange(index, value)}
             keyboardType="numeric"
             maxLength={1}
+            editable={false} // Make inputs non-editable since it's auto-filled
           />
         ))}
       </View>
@@ -79,14 +135,24 @@ const OTPScreen = ({ navigation }) => {
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
       
       <View style={styles.resendContainer}>
-  <Text style={styles.resendText}>{t('didNotReceiveCode')}</Text>
-  <TouchableOpacity style={styles.resendButton}>
-    <Text style={styles.resendButtonText}>{t('resendButton')}</Text> {/* Apply mehroon color here */}
-  </TouchableOpacity>
-</View>
+        <Text style={styles.resendText}>{t('didNotReceiveCode')}</Text>
+        <TouchableOpacity 
+          style={styles.resendButton}
+          onPress={handleResendCode}
+          disabled={loading}
+        >
+          <Text style={styles.resendButtonText}>{t('resendButton')}</Text>
+        </TouchableOpacity>
+      </View>
       
-      <TouchableOpacity style={styles.nextButton} onPress={verifyOtp}>
-        <Text style={styles.nextText}>{t('Verify')}</Text> {/* Translate "Next" */}
+      <TouchableOpacity 
+        style={[styles.nextButton, loading && styles.buttonDisabled]} 
+        onPress={() => verifyOtpCode()}
+        disabled={loading}
+      >
+        <Text style={styles.nextText}>
+          {loading ? t('verifying') : t('Verify')}
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -172,8 +238,10 @@ const styles = StyleSheet.create({
   nextText: {
     color: 'white',
     fontWeight: '600',
-  
-  }
+  },
+  buttonDisabled: {
+    backgroundColor: '#ccc',
+  },
 });
 
 export default OTPScreen;
