@@ -14,7 +14,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const WorkDetailsScreen = () => {
+const WorkDetailsScreen = ({ route }) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const [form, setForm] = useState({
@@ -27,12 +27,18 @@ const WorkDetailsScreen = () => {
   const handleInputChange = (key, value) => {
     setForm({ ...form, [key]: value });
   };
+  const userData = route.params?.userData || {};
 
   const handleNext = () => {
     if (validateInputs()) {
-      navigation.navigate('ProfilePictureScreen');
+    
+// When navigating to next screen
+navigation.navigate('ProfilePictureScreen', { 
+  userData: { ...userData, ...form }
+});
     }
   };
+  
 
   const validateInputs = () => {
     if (!form.yearsOfExperience || !form.workAvailability || !form.ratePerHour) {

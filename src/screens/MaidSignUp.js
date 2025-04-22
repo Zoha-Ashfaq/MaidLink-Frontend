@@ -1,22 +1,36 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { registerMaid } from '../services/api';
 
 const MaidSignUp = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
 
   const [form, setForm] = useState({
-    fullName: '',
-    phone: '',
-    cityOfService: '',
-    password: '',
+    userName: 'Test Maid Name',
+    phone: '03001234567',
+    password: 'TestPass@123',
+    serviceCity: 'Lahore',
+    experience: 2,
+    ratePerHour: 1000,
+    availability: 'Full Time',
+    services: ['Cleaning', 'Cooking'],
+    termsAccepted: true,
+    role: 'maid',
+    fcm: 'test_fcm_token'
   });
 
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
+
+  // Validation patterns
+  const fullNamePattern = /^[A-Za-z][A-Za-z ]*[A-Za-z]$/;
+  const phonePattern = /^((\+92)|0)?3\d{2}\d{7}$/;
+  const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   // Function to handle input changes
   const handleInputChange = (key, value) => {
@@ -26,26 +40,28 @@ const MaidSignUp = () => {
 
   // Validate the inputs
   const validateInputs = () => {
-    if (!form.fullName || !form.phone || !form.cityOfService || !form.password) {
+    if (!form.userName || !form.phone || !form.password || !form.serviceCity) {
       setError(t('alerts.emptyField'));
       return false;
     }
 
-    const fullNamePattern = /^[A-Za-z ]+$/;
-    if (!fullNamePattern.test(form.fullName)) {
-      setError(t('alerts.invalidFullName'));
+    if (!fullNamePattern.test(form.userName)) {
+      setError(t('alerts.invalidName'));
       return false;
     }
 
-    const phonePattern = /^03[0-9]{9}$/;
     if (!phonePattern.test(form.phone)) {
       setError(t('alerts.invalidPhone'));
       return false;
     }
 
-    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordPattern.test(form.password)) {
       setError(t('alerts.invalidPassword'));
+      return false;
+    }
+
+    if (!form.termsAccepted) {
+      setError(t('alerts.acceptTerms'));
       return false;
     }
 
@@ -54,12 +70,20 @@ const MaidSignUp = () => {
 
   // Handle next button press
   const handleNext = () => {
-    if (validateInputs()) {
-      setStep(step + 1);
-      navigation.navigate('WorkDetailsScreen');
-    }
+    if (!validateInputs()) return;
+  
+    // Format phone
+    const formattedPhone = form.phone.startsWith('+92') ? form.phone : `+92${form.phone}`;
+    
+    const userData = {
+      ...form,
+      phone: formattedPhone,
+    };
+  
+    // Navigate to WorkDetailsScreen and pass userData
+    navigation.navigate('WorkDetailsScreen', { userData });
   };
-
+  
   // Handle back button press
   const handleBack = () => {
     navigation.goBack();
@@ -96,8 +120,8 @@ const MaidSignUp = () => {
         <TextInput
           style={styles.input}
           placeholder={t('maidSignUpScreen.placeholders.fullName')}
-          value={form.fullName}
-          onChangeText={(text) => handleInputChange('fullName', text)}
+          value={form.userName}
+          onChangeText={(text) => handleInputChange('userName', text)}
         />
       </View>
       
@@ -117,8 +141,8 @@ const MaidSignUp = () => {
         <TextInput
           style={styles.input}
           placeholder={t('maidSignUpScreen.placeholders.cityOfService')}
-          value={form.cityOfService}
-          onChangeText={(text) => handleInputChange('cityOfService', text)}
+          value={form.serviceCity}
+          onChangeText={(text) => handleInputChange('serviceCity', text)}
         />
       </View>
 
@@ -137,8 +161,14 @@ const MaidSignUp = () => {
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
       {/* Next Button */}
-      <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-        <Text style={styles.nextButtonText}>{t('maidSignUpScreen.next')}</Text>
+      <TouchableOpacity 
+        style={[styles.nextButton, loading && styles.buttonDisabled]} 
+        onPress={handleNext}
+        disabled={loading}
+      >
+        <Text style={styles.nextButtonText}>
+          {loading ? t('signUpScreen.registering') : t('maidSignUpScreen.next')}
+        </Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -232,6 +262,9 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     marginBottom: 10,
+  },
+  buttonDisabled: {
+    backgroundColor: '#ccc',
   },
 });
 

@@ -1,104 +1,162 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
-import { useTranslation } from "react-i18next"; // Import useTranslation hook
+import React, { useState } from "react";
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  ScrollView, 
+  Image, 
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator
+} from "react-native";
+import { useTranslation } from "react-i18next";
+import { useUser } from './UserContext';
+import api from '../services/api';
 
 const MaidDetailsScreen = ({ route, navigation }) => {
-  const { t } = useTranslation(); // Initialize translation hook
+  const { t } = useTranslation();
+  const { maid } = route.params;
+  const { user } = useUser();
+  const [loading, setLoading] = useState(false);
 
-  // Dummy maid data
-  const maid = {
-    profilePicture: "https://castle-keepers.com/wp-content/uploads/2023/05/maid-services-in-charleston.jpg", // Replace with a valid image URL
-    fullName: "Ayesha Khan",
-    city: "Lahore",
-    experience: 5,
-    ratePerHour: 200,
-    services: ["Cleaning", "Cooking", "Baby Sitting"],
-    policeVerified: true,
+  const handleBookNow = async () => {
+    if (!user) {
+      Alert.alert(t("MaidDetails.LoginRequired"), t("MaidDetails.PleaseLogin"));
+      navigation.navigate('Login');
+      return;
+    }
+
+    if (user.role !== 'homeowner' && user.role !== 'owner') {
+      Alert.alert(t("MaidDetails.NotAuthorized"), t("MaidDetails.OnlyHomeowners"));
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await api.post(`/order/owner/request-maid/${maid._id}`);
+      
+      Alert.alert(
+        t("MaidDetails.RequestSent"), 
+        t("MaidDetails.RequestSentMessage")
+      );
+      
+      // Optional: Navigate back or to bookings screen
+      navigation.goBack();
+      
+    } catch (error) {
+      console.error('Request failed:', error);
+      
+      let errorMessage = t("MaidDetails.RequestFailed");
+      if (error.response?.data?.msg) {
+        errorMessage = error.response.data.msg;
+      } else if (error.message.includes('Network Error')) {
+        errorMessage = t("MaidDetails.NetworkError");
+      }
+      
+      Alert.alert(t("MaidDetails.Error"), errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.card}>
-        <Image source={{ uri: maid.profilePicture }} style={styles.profileImage} />
+        <Image
+          source={maid.profileImg ? { uri: maid.profileImg } : require("../../assets/pictures/maid1.jpg")}
+          style={styles.profileImage}
+        />
 
-        <Text style={styles.name}>{maid.fullName}</Text>
-        <Text style={styles.label}>{t("MaidDetails.CityOfService")}</Text> {/* Translate key */}
-        <Text style={styles.value}>{maid.city}</Text>
+        <Text style={styles.name}>{maid.userName}</Text>
 
-        <Text style={styles.label}>{t("MaidDetails.YearsOfExperience")}</Text> {/* Translate key */}
-        <Text style={styles.value}>{maid.experience} {t("MaidDetails.Years")}</Text> {/* Translate key */}
+        <Text style={styles.label}>{t("MaidDetails.CityOfService")}</Text>
+        <Text style={styles.value}>{maid.serviceCity}</Text>
 
-        <Text style={styles.label}>{t("MaidDetails.RatePerHour")}</Text> {/* Translate key */}
+        <Text style={styles.label}>{t("MaidDetails.YearsOfExperience")}</Text>
+        <Text style={styles.value}>{maid.experience || 0} {t("MaidDetails.Years")}</Text>
+
+        <Text style={styles.label}>{t("MaidDetails.RatePerHour")}</Text>
         <Text style={styles.value}>Rs. {maid.ratePerHour}</Text>
 
-        <Text style={styles.label}>{t("MaidDetails.ServicesOffered")}</Text> {/* Translate key */}
-        <Text style={styles.value}>{maid.services.join(", ")}</Text>
+        <Text style={styles.label}>{t("MaidDetails.ServicesOffered")}</Text>
+        <Text style={styles.value}>{maid.services?.join(", ")}</Text>
 
-        <Text style={styles.label}>{t("MaidDetails.PoliceVerificationStatus")}</Text> {/* Translate key */}
+        <Text style={styles.label}>{t("MaidDetails.PoliceVerificationStatus")}</Text>
         <Text style={[styles.value, { color: maid.policeVerified ? "green" : "red" }]}>
-          {maid.policeVerified ? t("MaidDetails.Verified") : t("MaidDetails.NotVerified")} {/* Translate key */}
+          {maid.policeVerified ? t("MaidDetails.Verified") : t("MaidDetails.NotVerified")}
         </Text>
 
         <TouchableOpacity
           style={styles.bookButton}
-          onPress={() => navigation.navigate("BookingScreen", { maid })}
+          onPress={handleBookNow}
+          disabled={loading}
         >
-          <Text style={styles.bookButtonText}>{t("MaidDetails.BookNow")}</Text> {/* Translate key */}
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.bookButtonText}>{t("MaidDetails.BookNow")}</Text>
+          )}
         </TouchableOpacity>
       </View>
     </ScrollView>
   );
 };
 
+
 export default MaidDetailsScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1, // Ensures the container grows to fill available space
-    padding: 20,
-    backgroundColor: "#F7FFE5",
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+    backgroundColor: "#F0F4F8",
   },
   card: {
+    width: '100%', // full width relative to container padding
     backgroundColor: "#fff",
-    borderRadius: 16,
-    padding: 20,
-    elevation: 4,
+    borderRadius: 20,
+    padding: 24,
     shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
-    flex: 1, // Makes the card occupy the full available height
-    justifyContent: "space-between", // Distributes the content evenly
+    elevation: 6,
   },
   profileImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 140,
+    height: 140,
+    borderRadius: 70,
     alignSelf: "center",
-    marginBottom: 15,
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: "#91AC8F",
   },
   name: {
-    fontSize: 22,
-    fontWeight: "bold",
+    fontSize: 24,
+    fontWeight: "700",
     textAlign: "center",
-    marginBottom: 10,
+    marginBottom: 20,
+    color: "#333",
   },
   label: {
     fontSize: 16,
     fontWeight: "600",
+    color: "#555",
     marginTop: 10,
-    color: "#444",
   },
   value: {
     fontSize: 16,
-    color: "#333",
+    color: "#222",
+    marginTop: 2,
   },
   bookButton: {
     backgroundColor: "#91AC8F",
-    paddingVertical: 12,
-    borderRadius: 30,
-    marginTop: 25,
+    paddingVertical: 14,
+    borderRadius: 28,
+    marginTop: 30,
     alignItems: "center",
-    marginBottom: 20, // Ensures the button is spaced well
   },
   bookButtonText: {
     color: "#fff",

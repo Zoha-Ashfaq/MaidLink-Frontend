@@ -1,93 +1,240 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
-import { useTranslation } from "react-i18next"; // Import useTranslation hook
+import { View, Text, TextInput, TouchableOpacity, FlatList, Alert, Image, StyleSheet, ActivityIndicator , ScrollView } from 'react-native';
+import { useTranslation } from "react-i18next";
+import { Ionicons } from "@expo/vector-icons";
+import api from '../services/api';
+import { useUser } from './UserContext';
 
 const HomeownerDetailsScreen = ({ route, navigation }) => {
-  const { t } = useTranslation(); // Initialize translation hook
-  const { job } = route.params; // Access job details passed from MaidHomeScreen
+  const { t } = useTranslation();
+    const { user } = useUser();
+  const { orderDetails } = route.params;
+  const handleApplyForOrder = async (orderId) => {
+    try {
+      const response = await api.post(
+        `/order/maid/apply/${orderId}`,  
+        {}, 
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${user.token}`,
+          }
+        }
+      );
+  
+      if (response.status >= 200 && response.status < 300) {
+        if (response.data?.status === false) {
+          Alert.alert('Notice', response.data.msg || 'Application not processed');
+        } else {
+          Alert.alert(
+            'Success', 
+            response.data?.msg || 'Applied to order successfully!',
+            [
+              { 
+                text: 'OK', 
+                onPress: () => navigation.goBack() // Navigate back after OK
+              }
+            ]
+          );
+        }
+      } else {
+        throw new Error(response.data?.msg || 'Unexpected response from server');
+      }
+    } catch (error) {
+      console.error('Full error details:', error);
+  
+      let errorMessage = 'Failed to apply for order';
+      if (error.response) {
+        errorMessage = error.response.data?.msg || 
+                      error.response.data?.message || 
+                      `Server error (${error.response.status})`;
+      } else if (error.request) {
+        errorMessage = 'No response from server - please check your connection';
+      }
+  
+      Alert.alert('Error', errorMessage);
+    }
+  };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.card}>
-        <Image source={job.image} style={styles.profileImage} />
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#333" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>{t("HomeownerDetails.Title")}</Text>
+        <View style={{ width: 24 }} /> {/* Spacer for alignment */}
+      </View>
 
-        <Text style={styles.name}>{job.homeowner}</Text>
-        <Text style={styles.label}>{t("HomeownerDetails.Location")}</Text> {/* Translate key */}
-        <Text style={styles.value}>{job.location}</Text>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        {/* Profile Section */}
+        <View style={styles.profileSection}>
+          <Image 
+            source={require('../../assets/pictures/maid1.jpg')} 
+            style={styles.profileImage}
+          />
+          <Text style={styles.name}>{orderDetails.ownerName}</Text>
+          <View style={styles.ratingContainer}>
+            <Ionicons name="star" size={20} color="#FFD700" />
+            <Text style={styles.ratingText}>4.8 (24 reviews)</Text>
+          </View>
+        </View>
 
-        <Text style={styles.label}>{t("HomeownerDetails.JobType")}</Text> {/* Translate key */}
-        <Text style={styles.value}>{job.task}</Text>
+        {/* Details Section */}
+        <View style={styles.detailsCard}>
+          <View style={styles.detailRow}>
+            <Ionicons name="location-outline" size={22} color="#66785F" />
+            <Text style={styles.detailText}>{orderDetails.location}</Text>
+          </View>
 
-        <Text style={styles.label}>{t("HomeownerDetails.Duration")}</Text> {/* Translate key */}
-        <Text style={styles.value}>{job.duration}</Text>
+          <View style={styles.detailRow}>
+            <Ionicons name="briefcase-outline" size={22} color="#66785F" />
+            <Text style={styles.detailText}>{orderDetails.jobType}</Text>
+          </View>
 
-        <Text style={styles.label}>{t("HomeownerDetails.ChargesPerHour")}</Text> {/* Translate key */}
-        <Text style={styles.value}>Rs. {job.charges} PKR</Text>
+          <View style={styles.detailRow}>
+            <Ionicons name="time-outline" size={22} color="#66785F" />
+            <Text style={styles.detailText}>{orderDetails.duration}</Text>
+          </View>
 
-        <TouchableOpacity
+          <View style={styles.detailRow}>
+            <Ionicons name="cash-outline" size={22} color="#66785F" />
+            <Text style={styles.detailText}>${orderDetails.charges}</Text>
+          </View>
+        </View>
+
+        {/* Description Section */}
+        <View style={styles.descriptionCard}>
+          <Text style={styles.sectionTitle}>About This Service</Text>
+          <Text style={styles.descriptionText}>
+            Professional cleaning service with attention to detail. 
+            Includes deep cleaning of all rooms, kitchen sanitation, 
+            and bathroom disinfection.It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
+
+
+          </Text>
+        </View>
+      </ScrollView>
+
+      {/* Fixed Footer Button */}
+      <View style={styles.footer}>
+      <TouchableOpacity 
           style={styles.bookButton}
-          onPress={() => navigation.navigate("BookingScreen", { job })}
+          onPress={() => handleApplyForOrder(orderDetails._id)} 
         >
-          <Text style={styles.bookButtonText}>{t("HomeownerDetails.RequestNow")}</Text> {/* Translate key */}
+          <Text style={styles.bookButtonText}>{t("HomeownerDetails.RequestNow")}</Text>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
-export default HomeownerDetailsScreen;
-
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1, // Ensures the container grows to fill available space
-    padding: 20,
+    flex: 1,
     backgroundColor: "#F7FFE5",
   },
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    padding: 20,
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    flex: 1, // Makes the card occupy the full available height
-    justifyContent: "space-between", // Distributes the content evenly
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
+    backgroundColor: "white",
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#333",
+  },
+  scrollContainer: {
+    padding: 16,
+    paddingBottom: 100, // Space for fixed footer
+  },
+  profileSection: {
+    alignItems: "center",
+    marginBottom: 24,
   },
   profileImage: {
     width: 120,
     height: 120,
     borderRadius: 60,
-    alignSelf: "center",
-    marginBottom: 15,
+    borderWidth: 3,
+    borderColor: "#91AC8F",
   },
   name: {
     fontSize: 22,
     fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 10,
+    marginTop: 12,
+    color: "#333",
   },
-  label: {
+  ratingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 6,
+  },
+  ratingText: {
+    marginLeft: 4,
     fontSize: 16,
-    fontWeight: "600",
-    marginTop: 10,
-    color: "#444",
+    color: "#666",
   },
-  value: {
+  detailsCard: {
+    backgroundColor: "white",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    elevation: 2,
+  },
+  detailRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 8,
+  },
+  detailText: {
+    marginLeft: 12,
     fontSize: 16,
     color: "#333",
   },
+  descriptionCard: {
+    backgroundColor: "white",
+    borderRadius: 12,
+    padding: 16,
+    elevation: 2,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 8,
+    color: "#333",
+  },
+  descriptionText: {
+    fontSize: 15,
+    lineHeight: 22,
+    color: "#555",
+  },
+  footer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 16,
+    backgroundColor: "white",
+    borderTopWidth: 1,
+    borderTopColor: "#E0E0E0",
+  },
   bookButton: {
     backgroundColor: "#91AC8F",
-    paddingVertical: 12,
+    paddingVertical: 14,
     borderRadius: 30,
-    marginTop: 25,
     alignItems: "center",
-    marginBottom: 20, // Ensures the button is spaced well
   },
   bookButtonText: {
-    color: "#fff",
+    color: "white",
     fontSize: 18,
     fontWeight: "bold",
   },
 });
+
+export default HomeownerDetailsScreen;

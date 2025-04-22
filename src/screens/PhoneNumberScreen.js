@@ -3,23 +3,48 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } fro
 import colors from '../../constants/colors';
 import i18n from '../../i18n'; // Import translations
 import { Ionicons } from '@expo/vector-icons'; // Importing Ionicons for back icon
+import { sendOTP } from '../services/api';
 
 export default function PhoneNumberScreen({ navigation }) {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const validatePhoneNumber = (number) => {
     const regex = /^(\+92|0)?3\d{9}$/; // Validate a Pakistani phone number
     return regex.test(number);
   };
 
-  const handleSendCode = () => {
-    if (validatePhoneNumber(phoneNumber)) {
-      Alert.alert(i18n.t('otpSent'), i18n.t('otpMessage'));
-      setError('');
-      navigation.navigate('OTP'); // Navigate to OTP screen
-    } else {
+  const handleSendCode = async () => {
+    if (!validatePhoneNumber(phoneNumber)) {
       setError(i18n.t('invalidNumber'));
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError('');
+
+      // Format phone number to include country code if not present
+      const formattedPhone = phoneNumber.startsWith('+92') ? phoneNumber : `+92${phoneNumber}`;
+
+      const response = await sendOTP(formattedPhone);
+
+      if (response.status) {
+        console.log('Server response:', response); // Debug log
+        // Navigate to OTP screen with both phone and OTP
+        navigation.navigate('OTP', {
+          phone: formattedPhone,
+          serverOtp: response.otp // Pass the OTP from server response
+        });
+      } else {
+        setError(response.msg || i18n.t('otpError'));
+      }
+    } catch (error) {
+      console.error('Send OTP Error:', error);
+      setError(error.response?.data?.msg || i18n.t('otpError'));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -30,8 +55,9 @@ export default function PhoneNumberScreen({ navigation }) {
         <Ionicons name="arrow-back" size={24} color='#66785F' />
       </TouchableOpacity>
 
-      {/* Illustration */}
+      {/* Illustration 
       <Image source={require('../../assets/pictures/sign up.png')} style={styles.illustration} />
+      */}
 
       {/* Title */}
       <Text style={styles.title}>{i18n.t('enterPhone')}</Text>
@@ -54,8 +80,14 @@ export default function PhoneNumberScreen({ navigation }) {
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
       {/* Send Code Button */}
-      <TouchableOpacity style={styles.button} onPress={handleSendCode}>
-        <Text style={styles.buttonText}>{i18n.t('sendCode')}</Text>
+      <TouchableOpacity
+        style={[styles.button, loading && styles.buttonDisabled]}
+        onPress={handleSendCode}
+        disabled={loading}
+      >
+        <Text style={styles.buttonText}>
+          {loading ? i18n.t('sending') : i18n.t('sendCode')}
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -82,7 +114,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     marginBottom: 0, // Removed space between illustration and title
   },
-  
+
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -90,7 +122,7 @@ const styles = StyleSheet.create({
     marginBottom: 0, // Removed space between title and input field
     marginTop: -30, // Reduced negative margin to move the title up closer
   },
-  
+
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -128,6 +160,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,  // Added space between the input and the button
     marginBottom: 40, // Space at the bottom of the screen
+    paddingBottom: 100
+  },
+  buttonDisabled: {
+    backgroundColor: '#ccc',
   },
   buttonText: {
     color: '#FFFFFF',

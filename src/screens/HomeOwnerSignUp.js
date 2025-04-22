@@ -7,20 +7,37 @@ import {
   StyleSheet,
   ScrollView,
   Image,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import i18n from '../../i18n';
+import { registerHomeOwner } from '../services/api';
+
+// Function to generate a random FCM token for testing
+const generateTempFcmToken = () => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const tokenLength = 32;
+  let token = 'temp_fcm_';
+  for (let i = 0; i < tokenLength; i++) {
+    token += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return token;
+};
 
 const HomeOwnerSignUp = ({ navigation }) => {
   const [form, setForm] = useState({
-    fullName: '',
-    username: '',
-    email: '',
-    phone: '',
-    password: '',
-    address: '',
-    termsAccepted: false,
+    fullName: 'Test Owner Name',
+    username: 'testowner123',
+    email: 'testowner@gmail.com',
+    phone: '03001234567',
+    password: 'TestPass@123',
+    address: 'Test Address, Lahore',
+    termsAccepted: true,
+    role: 'homeowner',
+    fcm: generateTempFcmToken(), // Generate a unique temp FCM token
   });
+
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (key, value) => {
     setForm({ ...form, [key]: value });
@@ -34,40 +51,90 @@ const HomeOwnerSignUp = ({ navigation }) => {
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
     for (const [key, value] of Object.entries(form)) {
-      if (key !== 'termsAccepted' && value.trim() === '') {
-        alert(i18n.t('alerts.emptyField'));
+      if (key !== 'termsAccepted' && key !== 'role' && value.trim() === '') {
+        Alert.alert(i18n.t('alerts.emptyField'));
         return false;
       }
     }
 
     if (!form.username.match(usernameRegex)) {
-      alert(i18n.t('alerts.invalidUsername'));
+      Alert.alert(i18n.t('alerts.invalidUsername'));
       return false;
     }
     if (!form.email.match(emailRegex)) {
-      alert(i18n.t('alerts.invalidEmail'));
+      Alert.alert(i18n.t('alerts.invalidEmail'));
       return false;
     }
     if (!form.phone.match(phoneRegex)) {
-      alert(i18n.t('alerts.invalidPhone'));
+      Alert.alert(i18n.t('alerts.invalidPhone'));
       return false;
     }
     if (!form.password.match(passwordRegex)) {
-      alert(i18n.t('alerts.invalidPassword'));
+      Alert.alert(i18n.t('alerts.invalidPassword'));
       return false;
     }
     if (!form.termsAccepted) {
-      alert(i18n.t('signUpScreen.alertTerms'));
+      Alert.alert(i18n.t('signUpScreen.alertTerms'));
       return false;
     }
 
     return true;
   };
 
-  const handleSubmit = () => {
-    if (validateInputs()) {
-      alert(i18n.t('signUpScreen.success'));
-      navigation.navigate('Login'); // 👈 navigate to Login screen
+  const handleSubmit = async () => {
+    if (!validateInputs()) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      // Format phone number to include country code if not present
+      const formattedPhone = form.phone.startsWith('+92') ? form.phone : `+92${form.phone}`;
+      
+      // Generate a new FCM token for each submission
+      const tempFcmToken = generateTempFcmToken();
+      
+      // Structure the data according to the backend schema
+      const userData = {
+        userName: form.username,
+        name: form.fullName,
+        email: form.email,
+        phone: formattedPhone,
+        password: form.password,
+        homeAddress: form.address,
+        role: form.role,
+        fcm: tempFcmToken, // Use the newly generated temp FCM token
+      };
+
+      const response = await registerHomeOwner(userData);
+      
+      if (response.status) {
+        Alert.alert(
+          i18n.t('signUpScreen.success'),
+          i18n.t('signUpScreen.loginPrompt'),
+          [
+            {
+              text: 'OK',
+              onPress: () => navigation.navigate('Login')
+            }
+          ]
+        );
+      } else {
+        // Handle array of error messages
+        const errorMessage = Array.isArray(response.msg) 
+          ? response.msg.join('\n') 
+          : response.msg;
+        Alert.alert(i18n.t('signUpScreen.error'), errorMessage);
+      }
+    } catch (error) {
+      // Handle array of error messages from the error response
+      const errorMessage = Array.isArray(error.response?.data?.msg)
+        ? error.response.data.msg.join('\n')
+        : error.response?.data?.msg || i18n.t('signUpScreen.genericError');
+      Alert.alert(i18n.t('signUpScreen.error'), errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -171,8 +238,14 @@ const HomeOwnerSignUp = ({ navigation }) => {
       </TouchableOpacity>
 
       {/* Submit Button */}
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitButtonText}>{i18n.t('signUpScreen.submit')}</Text>
+      <TouchableOpacity 
+        style={[styles.submitButton, loading && styles.buttonDisabled]} 
+        onPress={handleSubmit}
+        disabled={loading}
+      >
+        <Text style={styles.submitButtonText}>
+          {loading ? i18n.t('signUpScreen.registering') : i18n.t('signUpScreen.submit')}
+        </Text>
       </TouchableOpacity>
 
       {/* Already Have an Account */}
@@ -272,6 +345,9 @@ const styles = StyleSheet.create({
   link: {
     color: '#de8a0d',
     fontWeight: 'bold',
+  },
+  buttonDisabled: {
+    backgroundColor: '#ccc',
   },
 });
 

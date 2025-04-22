@@ -14,7 +14,9 @@ import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons'; // For icons
 
-const ProfilePictureScreen = () => {
+const ProfilePictureScreen = ({ route }) => {
+  const { userData } = route.params;
+
   const { t } = useTranslation();
   const navigation = useNavigation();
   const [image, setImage] = useState(null);
@@ -30,15 +32,15 @@ const ProfilePictureScreen = () => {
         aspect: [4, 3],
         quality: 1,
       });
-
-      if (!result.cancelled) {
-        setImage(result.uri);
+  
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        setImage(result.assets[0].uri);
       }
     } else {
       Alert.alert(t('alerts.permissionDenied'));
     }
   };
-
+  
   const takePhoto = async () => {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
     if (permission.granted) {
@@ -47,17 +49,29 @@ const ProfilePictureScreen = () => {
         aspect: [4, 3],
         quality: 1,
       });
-
-      if (!result.cancelled) {
-        setImage(result.uri);
+  
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        setImage(result.assets[0].uri);
       }
     } else {
       Alert.alert(t('alerts.permissionDenied'));
     }
   };
+  
+
 
   const handleNext = () => {
-    navigation.navigate('VerificationScreen'); // Navigate to the verification step
+    if (image) {
+      navigation.navigate('VerificationScreen', {
+        userData: {
+          ...userData,
+          profileImage: image,
+          bio
+        }
+      });
+    } else {
+      Alert.alert('Error', 'Please select a profile picture');
+    }
   };
 
   return (
